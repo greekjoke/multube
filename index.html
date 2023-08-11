@@ -65,6 +65,14 @@
     <audio id="audio2" controls="controls" src="media/gl02-03.mp3"></audio>
     -->
 
+    <pre id="text1" style="white-space: break-spaces;">
+      click to load text...
+    </pre>
+
+    <!--
+    <iframe src="https://greekjoke.github.io/counter/" width="320" height="240" align="left"></iframe>
+    -->
+
   </div>
 </body>
 <script>
@@ -197,6 +205,27 @@
     const data = await Main();
     const audioElem = $('#audioEmpty')[0];
     audioElem.src = data;
+  });
+
+  function getText(cb) {    
+    const request = new XMLHttpRequest();
+    request.open('GET', 'media/01.txt', true);
+    request.send(null);
+    request.onreadystatechange = function () {      
+      if (request.readyState === 4 && request.status === 200) {
+        const type = request.getResponseHeader('Content-Type');
+        if (type.indexOf("text") !== 1) {
+          cb(request.responseText);
+        }
+      }
+    }
+  }
+
+  $('#text1').click(function() {
+    const that = this;    
+    getText(function(text) {      
+      $(that).text(text);
+    });    
   });
 
 
