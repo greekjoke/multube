@@ -57,12 +57,13 @@ a:hover {
   display: inline-block;
   position: relative;
   margin: 0 5px;
+  cursor: pointer;
 }
 .menu > ul {
   padding-top: 0.75em;
 }
 .menu > ul > li:after {
-  content: ':';  
+  content: '\2022';  
   color: gray;
   position: absolute;
   right: -1.25em;
@@ -77,12 +78,15 @@ a:hover {
 .menu ul ul {
   min-width: 220px;
   border: 1px solid #aaa;
-  background-color: #eee;
-  padding: 5px;  
+  background-color: #eee;  
   box-shadow: 3px 3px 5px rgba(0,0,0,0.2);
 }
 .menu ul ul li {
   display: block;
+  padding: 5px;  
+}
+.menu ul ul li:hover {
+  background-color: #ffa;
 }
 /* menu drop-down*/
 .menu ul > li > ul {
@@ -95,23 +99,33 @@ a:hover {
 }
 /* sub-sub menu */
 .menu ul ul ul {
-  left: 0.5em;
+  left: 2.5em;
   top: 0.9em;
 }
 
 /* widgets */
+#widgets {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-around;
+}
 .placeholder {
   display: block;
   margin: 3em;
   color: #aaa;
   font-size: 2rem;
+  text-align: center;
+  width: 100%;
 }
 
 /* task */
 .task {
-  border: 1px solid black;
+  border: 1px solid gray;
   background-color: white;
   margin: 0.5rem;
-  min-width: 250px;
-  min-height: 150px;
+  min-width: 30%;
+  min-height: 200px;    
+  flex-grow: 1;
 }
