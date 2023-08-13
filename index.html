@@ -4,211 +4,95 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Cache-Control" content="max-age=3600, must-revalidate" />  
-  <title>Multube</title>
-
+  <meta http-equiv="Cache-Control" content="max-age=3600, must-revalidate" />    
+  <title>MulTube</title>
   <script src="https://code.jquery.com/jquery-2.2.4.min.js"
     integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
     crossorigin="anonymous"></script>
-
-  <script src="https://www.youtube.com/iframe_api"></script>     
-  
+  <script src="https://www.youtube.com/iframe_api"></script>       
   <script src="app.js"></script>
   <script src="task.js"></script>
-
-  <link rel="stylesheet" href="style.css">  
-
+  <link rel="stylesheet" 
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">  
+  <link rel="stylesheet" href="style.css">    
+  <link rel="icon" type="image/ico" href="favicon.ico"/>  
 </head>
 
-
 <body>
-  <div id="ctrl">
-    <input type="file" id="bnLoad" accept=".wav,.ogg,.mp3">Load</input>
-    <button id="bnStart">Start</button>&nbsp;
-    <button id="bnStop">Stop</button>    
-  </div>
-  <div id="views">    
+  <header>
+    <div id="logo"><img src="media/logo.svg"/></div>
+    <div id="title"><h1>MulTube</h1></div>
 
-    <div id="player1"></div>
-    <div id="player2"></div>
+    <!-- main menu -->
+    <div id="topmenu" class="menu">
+      <ul>
+        <li>
+          <b>Task</b>
+          <ul>
+            <li>Add Youtube video</li>
+            <li>Add audio file</li>
+            <li>Add text reading</li>
+            <li>Add picture</li>
+            <li>Add iFrame</li>
+          </ul>
+        </li>
+        <li>
+          <b>Preset</b>
+          <ul>
+            <li>Add preset</li>
+            <li>Delete current</li>
+            <li>
+              <b>List</b>
+              <ul>
+                <li>Default</li>
+                <li>Test1</li>
+                <li>Test22</li>
+              </ul>
+            </li>
+            <li>Some line</li>
+            <li>Again line</li>
+            <li>Final line</li>
+          </ul>
+        </li>
+        <li>
+          <b>Settings</b>
+          <ul>
+            <li>Export to file</li>
+            <li>Import from file</li>            
+            <li>
+              <b>Color scheme</b>
+              <ul>                
+                <li>Light</li>
+                <li>Dark</li>
+              </ul>
+            </li>            
+          </ul>          
+        </li>
+        <li><b><a target="_blank" href="https://greekjoke.github.io/multube/readme.md">Help</a></b></li>
+      </ul>
+      <!-- /main menu -->
 
-    <!--
-    <iframe id="player1" width="560" height="315" src="https://www.youtube.com/embed/MgmNJ4LtPms" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-    -->
-    
-    <!--
-    <iframe id="player2" width="560" height="315" src="https://www.youtube.com/embed/nbhwh-zmVB0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-    -->
-
-    <audio id="audioEmpty" controls="controls"></audio>
-    <!--
-    <audio id="audio1" controls="controls" src="media/01_06_03.mp3"></audio>
-    <audio id="audio2" controls="controls" src="media/gl02-03.mp3"></audio>
-    -->
-
-    <pre id="text1" style="white-space: break-spaces;">
-      click to load text...
-    </pre>
-
-    <!--
-    <iframe src="https://greekjoke.github.io/counter/" width="320" height="240" align="left"></iframe>
-    -->
-
+    </div>
+    <div id="gctrl">      
+      <i class="fa-solid fa-stop"></i>
+      <i class="fa-solid fa-play"></i>
+      <i class="fa-solid fa-pause"></i>
+      <i class="fa-solid fa-volume-xmark"></i>
+      <i class="fa-solid fa-volume-high"></i>
+    </div>
+  </header>  
+  <div id="widgets">    
+    <div class="placeholder">No any tasks here yet</div>
+    <div class="task">123</div>
+    <div class="task">123</div>
+    <div class="task">123</div>
   </div>
 </body>
+
 <script>
-/*
-  // for legacy browsers
-  let AudioContext = null;
-
-  function onAudioReady() {   
-    console.log('onAudioReady');
-
-    AudioContext = window.AudioContext || window.webkitAudioContext;
-
-    const audioContext = new AudioContext();
-    const audioElement = document.querySelector('#audio1');
-    const track = audioContext.createMediaElementSource(audioElement);
-
-    // default pan set to 0 - center
-    const stereoNode = new StereoPannerNode(audioContext, { pan: 0 });
-
-    // change the value of the balance by updating the pan value
-    //stereoNode.pan.value = -1; // left
-    //stereoNode.pan.value = 0; // center
-    stereoNode.pan.value = 1; // right
-
-    track
-      .connect(stereoNode)
-      .connect(audioContext.destination);
-
-  }
-
-  //setTimeout(() => onAudioReady(), 100);
-  */
-  let player1;
-  let player2;
-  let done = false;
-
-  function onYouTubeIframeAPIReady() {
-    console.log('onYouTubeIframeAPIReady');
-    /*
-    player = new YT.Player('player1', {
-      height: '315',
-      width: '560',
-      videoId: 'MgmNJ4LtPms',
-      events: {
-        'onReady': onPlayerReady,
-        'onStateChange': onPlayerStateChange
-      }
-    });
-    */
-/*
-    player1 = new YT.Player('player1', {
-      height: '315',
-      width: '560',
-      videoId: 'MgmNJ4LtPms',      
-    });
-
-    setTimeout(function() {
-      player2 = new YT.Player('player2', {
-        height: '315',
-        width: '560',
-        videoId: 'nbhwh-zmVB0',      
-      });
-    }, 500);
-*/    
-
-  };
-
-  function onPlayerReady(event) {
-    console.log('onPlayerReady', event);
-    event.target.playVideo();
-  }
-
-  function onPlayerStateChange(event) {
-    console.log('onPlayerStateChange', event.data);
-    if (event.data == YT.PlayerState.PLAYING && !done) {
-      //setTimeout(stopVideo, 6000);
-      //done = true;
-    }
-  }
-
-  function startVideo() {
-    console.log('startVideo');
-    player1.playVideo();
-    player2.playVideo();
-  }
-
-  function stopVideo() {
-    console.log('stopVideo');
-    player1.stopVideo();
-    player2.stopVideo();
-  }
-
-  $('#bnStart').click(function() {
-    //startVideo();
-/*
-    if (!AudioContext)
-      onAudioReady();
-
-    const audioElement = document.querySelector('#audio1');    
-    audioElement.playbackRate = 0.5;
-    audioElement.play();
-    */
+  $(document).ready(function() {
+    MtApp.init();
   });
-
-  $('#bnStop').click(function() {
-    //stopVideo();
-  });
-
-  const toBase64 = file => new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-  });
-
-  async function Main() {
-   const file = document.querySelector('#bnLoad').files[0];
-   try {
-      const result = await toBase64(file);
-      return result
-   } catch(error) {
-      console.error(error);
-      return;
-   }
-  }
-
-  $('#bnLoad').change(async function(e) { 
-    const file = e.target.files[0]; 
-    console.log('file', file);
-    const data = await Main();
-    const audioElem = $('#audioEmpty')[0];
-    audioElem.src = data;
-  });
-
-  function getText(cb) {    
-    const request = new XMLHttpRequest();
-    request.open('GET', 'media/01.txt', true);
-    request.send(null);
-    request.onreadystatechange = function () {      
-      if (request.readyState === 4 && request.status === 200) {
-        const type = request.getResponseHeader('Content-Type');
-        if (type.indexOf("text") !== 1) {
-          cb(request.responseText);
-        }
-      }
-    }
-  }
-
-  $('#text1').click(function() {
-    const that = this;    
-    getText(function(text) {      
-      $(that).text(text);
-    });    
-  });
-
-
 </script>
+
 </html>

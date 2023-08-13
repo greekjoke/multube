@@ -14,4 +14,6 @@ const MtApp = {
 
 };
 
+window.MtApp = MtApp;
+
 

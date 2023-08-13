@@ -1,0 +1,117 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 16px;
+}
+header {  
+  min-height: 40px;
+  background-color: #eee;
+}
+a {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+#logo img {
+  margin-top: 3px;
+  max-width: 32px;
+  height: auto;
+}
+#title {
+  color: cornflowerblue;
+}
+#logo, #title, #topmenu {
+  float: left;
+  padding: 2px 5px;
+}
+#gctrl {
+  float: right;
+  font-size: 2rem;
+  padding: 5px;
+  color: darkblue;
+}
+#widgets {
+  color: gray;
+  text-align: center;
+  border-width: 4px;
+  border-style: groove;
+  border-color: #aaa;
+  background-color: #eef;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 40px;
+  bottom: 0;  
+  overflow: hidden;
+}
+
+/* general menu styles */
+.menu li {
+  list-style: none;
+  display: inline-block;
+  position: relative;
+  margin: 0 5px;
+}
+.menu > ul {
+  padding-top: 0.75em;
+}
+.menu > ul > li:after {
+  content: ':';  
+  color: gray;
+  position: absolute;
+  right: -1.25em;
+  top: 0;
+  margin: 0 5px;
+  pointer-events: none;
+}
+.menu > ul > li:last-child:after {
+  content: '';
+}
+/* submenu */
+.menu ul ul {
+  min-width: 220px;
+  border: 1px solid #aaa;
+  background-color: #eee;
+  padding: 5px;  
+  box-shadow: 3px 3px 5px rgba(0,0,0,0.2);
+}
+.menu ul ul li {
+  display: block;
+}
+/* menu drop-down*/
+.menu ul > li > ul {
+  position: absolute;
+  display: none;
+  z-index: 1;
+}
+.menu ul > li:hover > ul {
+  display: block;
+}
+/* sub-sub menu */
+.menu ul ul ul {
+  left: 0.5em;
+  top: 0.9em;
+}
+
+/* widgets */
+.placeholder {
+  display: block;
+  margin: 3em;
+  color: #aaa;
+  font-size: 2rem;
+}
+
+/* task */
+.task {
+  border: 1px solid black;
+  background-color: white;
+  margin: 0.5rem;
+  min-width: 250px;
+  min-height: 150px;
+}
