@@ -51,7 +51,7 @@ a:hover {
 /* global controls */
 #gctrl {
   float: right;
-  font-size: 2rem;
+  font-size: 1.84rem;
   padding: 5px;
   color: darkblue;
 }
@@ -72,6 +72,10 @@ a:hover {
   overflow: hidden;
 }
 
+.button {
+  cursor: pointer;
+}
+
 /* general menu styles */
 .menu li {
   list-style: none;
@@ -79,6 +83,13 @@ a:hover {
   position: relative;
   margin: 0 5px;
   cursor: pointer;
+}
+.menu ul ul li > b {
+  font-weight: bold;
+  color: black;
+}
+.menu ul ul li > b:after {
+  content: ' \000BB';  
 }
 /* submenu */
 .menu ul ul {

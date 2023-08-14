@@ -30,42 +30,37 @@
         <li>
           <b>Task</b>
           <ul>
-            <li>Add Youtube video</li>
-            <li>Add audio file</li>
-            <li>Add text reading</li>
-            <li>Add picture</li>
-            <li>Add iFrame</li>
-            <li>Remove all</li>
+            <li action="addTaskYt">Add Youtube video</li>
+            <li action="addTaskAudio">Add audio file</li>
+            <li action="addTaskText">Add text reading</li>
+            <li action="addTaskPic">Add picture</li>
+            <li action="addTaskFrame">Add iFrame</li>
+            <li action="removeAllTasks">Remove all</li>
           </ul>
         </li>
         <li>
           <b>Preset</b>
           <ul>
-            <li>Add preset</li>
-            <li>Remove current</li>
+            <li action="addPreset">Add preset</li>
+            <li action="removePreset">Remove current</li>
             <li>
               <b>List</b>
-              <ul>
-                <li>Default</li>
-                <li>Test1</li>
-                <li>Test22</li>
+              <ul action="switchPreset">
+                <li data-id="default">Default</li>                
               </ul>
-            </li>
-            <li>Some line</li>
-            <li>Again line</li>
-            <li>Final line</li>
+            </li>            
           </ul>
         </li>
         <li>
           <b>Settings</b>
           <ul>
-            <li>Export to file</li>
-            <li>Import from file</li>            
+            <li action="settingsToFile">Export to file</li>
+            <li action="settingsFromFile">Import from file</li>            
             <li>
-              <b>Color scheme</b>
-              <ul>                
-                <li>Light</li>
-                <li>Dark</li>
+              <b>Color scheme</b>              
+              <ul action="switchColors">               
+                <li data-id="default">Light</li>
+                <li data-id="dark">Dark</li>
               </ul>
             </li>            
           </ul>          
@@ -76,20 +71,58 @@
 
     </div>
     <div id="gctrl">      
-      <i class="fa-solid fa-stop"></i>
-      <i class="fa-solid fa-play"></i>
-      <i class="fa-solid fa-pause"></i>
-      <i class="fa-solid fa-volume-xmark"></i>
-      <i class="fa-solid fa-volume-high"></i>
-      <span title="Speed">SP</span>
-      <span title="Rewind to random position">RR</span>      
+      <i action="gcStop" title="Stop playing" class="button fa-solid fa-stop"></i>
+      <i action="gcPlay" title="Play together" class="button fa-solid fa-play"></i>
+      <i action="gcPause" title="Pause" class="button fa-solid fa-pause"></i>
+      <i action="gcMute" title="Mute all" class="button fa-solid fa-volume-xmark"></i>
+      <i action="gcUnmute" title="Unmute all" class="button fa-solid fa-volume-high"></i>
+      <i action="gcRewindRand" title="Rewind to random position" class="button fa-solid fa-shuffle"></i>
+      <span class="menu" id="gcMenuSpeed">
+        <ul>
+          <li>
+            <i title="Speed control" class="fa-solid fa-clock-rotate-left"></i>
+            <ul action="gcSpeed">
+              <li data-id="0.25">0.25</li>
+              <li data-id="0.5">0.5</li>
+              <li data-id="0.75">0.75</li>
+              <li data-id="1.0">Normal</li>
+              <li data-id="1.25">1.25</li>
+              <li data-id="1.5">1.5</li>
+              <li data-id="1.75">1.75</li>
+              <li data-id="2.0">2</li>
+            </ul>
+          </li>
+        </ul>          
+      </span>      
     </div>
   </header>  
-  <div id="widgets">    
-    <!--
+
+  <script type="text/template" id="tpl-task">
+    <div class="task draggable drop-receiver">
+      <div class="bar handle">
+        <span class="icon"><i class="fa-solid fa-flask"></i></span>
+        <span class="title">Untitled</span>
+        <span class="status"><i class="fa-solid fa-battery-three-quarters"></i></span>
+        <span class="settings menu">
+            <ul>
+              <li>
+                <i class="fa-solid fa-gear"></i>
+                <ul>
+                  <li action="taskCmd" data-id="remove">Remove</li>
+                </ul>
+              </li>
+            </ul>          
+        </span>
+        <span class="remove" action="taskCmd" data-id="remove"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <div class="content">empty</div>
+    </div> 
+  </script>
+
+  <div id="widgets">        
     <div class="placeholder">No any tasks here yet</div>
-    -->
-    
+
+    <!--
     <div class="task draggable drop-receiver" id="task1">
       <div class="bar handle">
         <span class="icon"><i class="fa-solid fa-flask"></i></span>
@@ -100,9 +133,9 @@
               <li>
                 <i class="fa-solid fa-gear"></i>
                 <ul>
-                  <li>Alpha</li>
-                  <li>Betta</li>
-                  <li>Gamma</li>
+                  <li action="taskCmd" data-id="alpha">Alpha</li>
+                  <li action="taskCmd" data-id="betta">Betta</li>
+                  <li action="taskCmd" data-id="gamma">Gamma</li>
                 </ul>
               </li>
             </ul>          
@@ -148,7 +181,8 @@
       <div class="content">
         #4
       </div>
-    </div>      
+    </div>  
+    -->    
     
   </div>
 </body>
@@ -157,7 +191,6 @@
   $(document).ready(function() {
     MtApp.init();
 
-    // setup draggable
     var view = $('#widgets');
     window.MtDraggable(view, {
           sorting: true,
@@ -172,11 +205,26 @@
 
               const dropBefore = recv.hasClass('drop-before');
 
+              // вставляем в дерево
+              if (dropBefore) {
+                  target.insertBefore(recv);
+              } else {
+                  target.insertAfter(recv);
+              }
 
-              // TODO:
-              console.log('onDrop', movId, recv, dropBefore);
+              // TODO: пересчитываем массив задач и сохраняем настройки
 
           }
+      });
+
+      $('body').click(function(ev) {
+        const elem = $(ev.target);
+        const id = elem.attr('data-id');
+        let act = elem.attr('action');        
+        if (!act && !id) return;
+        if (!act) act = elem.parent().attr('action');
+        if (!act) return;
+        console.log('action', act, id);
       });
 
 
