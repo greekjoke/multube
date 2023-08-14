@@ -30,12 +30,33 @@ a:hover {
   float: left;
   padding: 2px 5px;
 }
+
+/* top menu */
+#topmenu {
+  margin-top: 0.75em;
+}
+#topmenu > ul > li:after {
+  content: '\2022';  
+  color: gray;
+  position: absolute;
+  right: -1.25em;
+  top: 0;
+  margin: 0 5px;
+  pointer-events: none;
+}
+#topmenu > ul > li:last-child:after {
+  content: '';
+}
+
+/* global controls */
 #gctrl {
   float: right;
   font-size: 2rem;
   padding: 5px;
   color: darkblue;
 }
+
+/* widgets */
 #widgets {
   color: gray;
   text-align: center;
@@ -58,21 +79,6 @@ a:hover {
   position: relative;
   margin: 0 5px;
   cursor: pointer;
-}
-.menu > ul {
-  padding-top: 0.75em;
-}
-.menu > ul > li:after {
-  content: '\2022';  
-  color: gray;
-  position: absolute;
-  right: -1.25em;
-  top: 0;
-  margin: 0 5px;
-  pointer-events: none;
-}
-.menu > ul > li:last-child:after {
-  content: '';
 }
 /* submenu */
 .menu ul ul {
@@ -127,5 +133,31 @@ a:hover {
   margin: 0.5rem;
   min-width: 30%;
   min-height: 200px;    
+  max-width: 50%;
+  max-height: 50%;
   flex-grow: 1;
+}
+.bar {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  align-items: stretch;
+  padding: 2px 5px;
+  background-color: #ded;      
+  border-bottom: 1px solid gray;
+  text-align: left;
+}
+.bar .title {  
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;  
+  padding: 0 2px;  
+}
+.bar .status,
+.bar .settings,
+.bar .remove {
+  display: inline-block;  
+  padding: 0 2px;
 }
