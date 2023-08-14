@@ -1,6 +1,6 @@
 /* application core object */
 
-const MtApp = {
+window.MtApp = {
   settings: {},
 
   // initialize application
@@ -14,6 +14,5 @@ const MtApp = {
 
 };
 
-window.MtApp = MtApp;
 
 

@@ -11,6 +11,7 @@
     crossorigin="anonymous"></script>
   <script src="https://www.youtube.com/iframe_api"></script>       
   <script src="app.js"></script>
+  <script src="draggable.js"></script>
   <script src="task.js"></script>
   <link rel="stylesheet" 
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">  
@@ -89,8 +90,8 @@
     <div class="placeholder">No any tasks here yet</div>
     -->
     
-    <div class="task">
-      <div class="bar">
+    <div class="task draggable drop-receiver" id="task1">
+      <div class="bar handle">
         <span class="icon"><i class="fa-solid fa-flask"></i></span>
         <span class="title">Untitled</span>
         <span class="status"><i class="fa-solid fa-battery-three-quarters"></i></span>
@@ -109,18 +110,45 @@
         <span class="remove"><i class="fa-solid fa-xmark"></i></span>
       </div>
       <div class="content">
-        ... sdlfpak asdasd adasd adasdasd 
+        #1
       </div>
     </div>      
 
-    <div class="task">#2</div>        
-    <div class="task">#3</div>
-    <div class="task">#4</div>
-    <div class="task">#5</div>    
-    <div class="task">#6</div>    
-    <div class="task">#7</div>    
-    <div class="task">#8</div>    
-    <div class="task">#9</div>
+    <div class="task draggable drop-receiver" id="task2">
+      <div class="bar">
+        <span class="icon"><i class="fa-solid fa-flask"></i></span>
+        <span class="title">Untitled</span>
+        <span class="status"><i class="fa-solid fa-battery-three-quarters"></i></span>        
+        <span class="remove"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <div class="content">
+        #2
+      </div>
+    </div>
+    
+    <div class="task draggable drop-receiver"  id="task3">
+      <div class="bar">
+        <span class="icon"><i class="fa-solid fa-flask"></i></span>
+        <span class="title">Untitled</span>
+        <span class="status"><i class="fa-solid fa-battery-three-quarters"></i></span>        
+        <span class="remove"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <div class="content">
+        #3
+      </div>
+    </div>
+    
+    <div class="task draggable drop-receiver" id="task4">
+      <div class="bar">
+        <span class="icon"><i class="fa-solid fa-flask"></i></span>
+        <span class="title">Untitled</span>
+        <span class="status"><i class="fa-solid fa-battery-three-quarters"></i></span>        
+        <span class="remove"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <div class="content">
+        #4
+      </div>
+    </div>      
     
   </div>
 </body>
@@ -128,6 +156,30 @@
 <script>
   $(document).ready(function() {
     MtApp.init();
+
+    // setup draggable
+    var view = $('#widgets');
+    window.MtDraggable(view, {
+          sorting: true,
+          sortHoriz: true,
+          onDrop: function (movId, recv) {
+              const target = $('#' + movId);
+
+              if (target.length != 1) {
+                  console.error('drop target not found', movId, recv);
+                  return;
+              }
+
+              const dropBefore = recv.hasClass('drop-before');
+
+
+              // TODO:
+              console.log('onDrop', movId, recv, dropBefore);
+
+          }
+      });
+
+
   });
 </script>
 
