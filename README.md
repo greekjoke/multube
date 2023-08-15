@@ -22,4 +22,5 @@
   - ui: user can change tasks order  
   - ui: color schemes
   - ui: support mobile devices
+  - ui: russian language
 -->

@@ -10,9 +10,10 @@
     integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
     crossorigin="anonymous"></script>
   <script src="https://www.youtube.com/iframe_api"></script>       
-  <script src="app.js"></script>
-  <script src="draggable.js"></script>
+  <script src="utils.js"></script>  
+  <script src="app.js"></script>  
   <script src="task.js"></script>
+  <script src="draggable.js"></script>
   <link rel="stylesheet" 
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">  
   <link rel="stylesheet" href="style.css">    
@@ -45,8 +46,8 @@
             <li action="removePreset">Remove current</li>
             <li>
               <b>List</b>
-              <ul action="switchPreset">
-                <li data-id="default">Default</li>                
+              <ul action="switchPreset" id="topmenuPresets">
+                <li value="default">Default</li>
               </ul>
             </li>            
           </ul>
@@ -59,8 +60,8 @@
             <li>
               <b>Color scheme</b>              
               <ul action="switchColors">               
-                <li data-id="default">Light</li>
-                <li data-id="dark">Dark</li>
+                <li value="default">Light</li>
+                <li value="dark">Dark</li>
               </ul>
             </li>            
           </ul>          
@@ -71,29 +72,29 @@
 
     </div>
     <div id="gctrl">      
+      <span class="menu" id="gcMenuSpeed">
+        <ul class="inline">
+          <li>
+            <i title="Speed control" class="fa-solid fa-clock-rotate-left"></i>
+            <ul action="gcSpeed">
+              <li value="0.25">0.25</li>
+              <li value="0.5">0.5</li>
+              <li value="0.75">0.75</li>
+              <li value="1.0">Normal</li>
+              <li value="1.25">1.25</li>
+              <li value="1.5">1.5</li>
+              <li value="1.75">1.75</li>
+              <li value="2.0">2</li>
+            </ul>
+          </li>
+        </ul>          
+      </span>      
       <i action="gcStop" title="Stop playing" class="button fa-solid fa-stop"></i>
       <i action="gcPlay" title="Play together" class="button fa-solid fa-play"></i>
       <i action="gcPause" title="Pause" class="button fa-solid fa-pause"></i>
       <i action="gcMute" title="Mute all" class="button fa-solid fa-volume-xmark"></i>
       <i action="gcUnmute" title="Unmute all" class="button fa-solid fa-volume-high"></i>
-      <i action="gcRewindRand" title="Rewind to random position" class="button fa-solid fa-shuffle"></i>
-      <span class="menu" id="gcMenuSpeed">
-        <ul>
-          <li>
-            <i title="Speed control" class="fa-solid fa-clock-rotate-left"></i>
-            <ul action="gcSpeed">
-              <li data-id="0.25">0.25</li>
-              <li data-id="0.5">0.5</li>
-              <li data-id="0.75">0.75</li>
-              <li data-id="1.0">Normal</li>
-              <li data-id="1.25">1.25</li>
-              <li data-id="1.5">1.5</li>
-              <li data-id="1.75">1.75</li>
-              <li data-id="2.0">2</li>
-            </ul>
-          </li>
-        </ul>          
-      </span>      
+      <i action="gcRewindRand" title="Rewind to random position" class="button fa-solid fa-shuffle"></i>      
     </div>
   </header>  
 
@@ -108,12 +109,12 @@
               <li>
                 <i class="fa-solid fa-gear"></i>
                 <ul>
-                  <li action="taskCmd" data-id="remove">Remove</li>
+                  <li action="taskCmd" value="remove">Remove</li>
                 </ul>
               </li>
             </ul>          
         </span>
-        <span class="remove" action="taskCmd" data-id="remove"><i class="fa-solid fa-xmark"></i></span>
+        <span class="remove" action="taskCmd" value="remove"><i class="fa-solid fa-xmark"></i></span>
       </div>
       <div class="content">empty</div>
     </div> 
@@ -146,42 +147,6 @@
         #1
       </div>
     </div>      
-
-    <div class="task draggable drop-receiver" id="task2">
-      <div class="bar">
-        <span class="icon"><i class="fa-solid fa-flask"></i></span>
-        <span class="title">Untitled</span>
-        <span class="status"><i class="fa-solid fa-battery-three-quarters"></i></span>        
-        <span class="remove"><i class="fa-solid fa-xmark"></i></span>
-      </div>
-      <div class="content">
-        #2
-      </div>
-    </div>
-    
-    <div class="task draggable drop-receiver"  id="task3">
-      <div class="bar">
-        <span class="icon"><i class="fa-solid fa-flask"></i></span>
-        <span class="title">Untitled</span>
-        <span class="status"><i class="fa-solid fa-battery-three-quarters"></i></span>        
-        <span class="remove"><i class="fa-solid fa-xmark"></i></span>
-      </div>
-      <div class="content">
-        #3
-      </div>
-    </div>
-    
-    <div class="task draggable drop-receiver" id="task4">
-      <div class="bar">
-        <span class="icon"><i class="fa-solid fa-flask"></i></span>
-        <span class="title">Untitled</span>
-        <span class="status"><i class="fa-solid fa-battery-three-quarters"></i></span>        
-        <span class="remove"><i class="fa-solid fa-xmark"></i></span>
-      </div>
-      <div class="content">
-        #4
-      </div>
-    </div>  
     -->    
     
   </div>
@@ -189,10 +154,36 @@
 
 <script>
   $(document).ready(function() {
+
     MtApp.init();
 
-    var view = $('#widgets');
-    window.MtDraggable(view, {
+    $('body').click(function(ev) {
+      const elem = $(ev.target);
+      const value = elem.attr('value');
+      let act = elem.attr('action');
+      
+      if (!act && !value) return;
+      if (!act) act = elem.parent().attr('action');
+      if (!act) return;
+
+      let fn = null;
+      const recv = [MtApp, window];
+
+      for(const i in recv) {
+        const obj = recv[i];
+        if (typeof(obj[act]) === 'function') {
+          fn = obj[act];
+          fn.call(obj, value, ev.target);
+          break;
+        }
+      }
+
+      if (!fn) {
+        console.error('invalid action', act, ev.target);
+      }
+    });
+
+    window.MtDraggable($('#widgets'), {
           sorting: true,
           sortHoriz: true,
           onDrop: function (movId, recv) {
@@ -215,18 +206,7 @@
               // TODO: пересчитываем массив задач и сохраняем настройки
 
           }
-      });
-
-      $('body').click(function(ev) {
-        const elem = $(ev.target);
-        const id = elem.attr('data-id');
-        let act = elem.attr('action');        
-        if (!act && !id) return;
-        if (!act) act = elem.parent().attr('action');
-        if (!act) return;
-        console.log('action', act, id);
-      });
-
+    });
 
   });
 </script>

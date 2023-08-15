@@ -31,6 +31,10 @@ a:hover {
   padding: 2px 5px;
 }
 
+.inline {
+  display: inline;
+}
+
 /* top menu */
 #topmenu {
   margin-top: 0.75em;
@@ -50,10 +54,16 @@ a:hover {
 
 /* global controls */
 #gctrl {
-  float: right;
+  float: right;  
+  padding: 5px;  
+}
+#gctrl i {
   font-size: 1.84rem;
-  padding: 5px;
   color: darkblue;
+  padding: 0 5px;
+}
+#gcMenuSpeed.menu ul ul {
+  min-width: 120px;
 }
 
 /* widgets */
@@ -77,6 +87,10 @@ a:hover {
 }
 
 /* general menu styles */
+.menu ul {
+  font-size: 1.0rem;
+  color: black;
+}
 .menu li {
   list-style: none;
   display: inline-block;
