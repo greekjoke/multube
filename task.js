@@ -7,19 +7,21 @@ window.MtTask = function() {
   
   return {
 
-    menuItems: [
-      { id:'remove', title:'Remove' }
+    menuItems: [      
+      { id:'remove', title:'Remove task' },
     ],
 
     statusItems: [
-      { id:'test', html:'<i class="fa-solid fa-battery-three-quarters"></i>' }
+      { id:'general', html:'<i class="fa-regular fa-face-frown"></i>' }
     ],
 
     get envelope() { return dataEnv; },
     set envelope(v) { dataEnv = v; },
 
     get element() { return uiElem; },
+    get content() { return uiElem.find('.content'); },
     get id() { return dataEnv.id; },
+    get type() { return 'MtTask'; },
 
     get title() { return dataEnv.title; },
     set title(v) { 
@@ -33,7 +35,7 @@ window.MtTask = function() {
         return console.error('task data envelope already initialized');
       return dataEnv = {
         id: MtUtils.genUid(),
-        type: 'MtTask',
+        type: this.type,
         title: 'Untitled',
       };
     },
@@ -67,6 +69,10 @@ window.MtTask = function() {
       return uiElem = elem;      
     },
 
+    init: function() {
+      // NOTE: task registration is done, get ready to work
+    },
+
     command: function(code, target) {
       switch(code) {
         case 'remove':
@@ -76,6 +82,19 @@ window.MtTask = function() {
           console.error('invalid task command', code, target);
           break;
       };
+    },
+
+    setStatus: function(statusId, value) {
+      statusId = statusId || 'general';
+      
+      const s = this.statusItems.find(x => {
+        return x.id === statusId ? x : undefined;
+      });
+      
+      if (!s) 
+        return console.error('invalid status id', statusId);
+
+      s.elem.attr('value', value);
     },
 
   };

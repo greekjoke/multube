@@ -187,6 +187,7 @@ a:hover {
   background-color: #ded;      
   border-bottom: 1px solid gray;
   text-align: left;
+  color: black;
 }
 .bar .title {  
   flex-grow: 1;
@@ -194,11 +195,44 @@ a:hover {
   text-overflow: ellipsis;
   white-space: nowrap;
   display: inline-block;  
-  padding: 0 2px;  
+  padding: 0 5px;  
 }
 .bar .status,
 .bar .settings,
 .bar .remove {
   display: inline-block;  
   padding: 0 2px;
+}
+.bar .menu ul ul {
+  left: -8em;  
+}
+.bar .settings > ul > li > i {
+  color: black;
+}
+.bar .status {
+  color: gray;
+}
+.bar .icon {
+  color: brown;
+}
+
+/* youtube */
+.task[data-type='MtTaskYt'] .bar {
+  background-color: #fba;
+}
+.task[data-type='MtTaskYt'] .bar .icon i:before {
+  content: "\f03d";  
+}
+.task[data-type='MtTaskYt'] .content-wrap {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%;
+}
+.task[data-type='MtTaskYt'] .content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }

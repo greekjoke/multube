@@ -18,6 +18,7 @@ window.MtApp = {
   },
 
   tlist: {},
+  ready: false,
 
   init: function(opt) {
     opt = opt || {};
@@ -31,6 +32,8 @@ window.MtApp = {
     this.updateMenuPresets();
     this.updateSwithFlags('#topmenuColors', this.settings.curScheme);
     this.updatePreset();
+
+    this.ready = true;
   },
 
   releaseMenu: function(menu) {
@@ -112,6 +115,7 @@ window.MtApp = {
       const elem = t.createUI();
       this._registerTaskUI(elem);      
       this.tlist[t.id] = t;
+      t.init();
     }
   },
 
@@ -204,11 +208,9 @@ window.MtApp = {
 
   settingWrite: function(deferred) {
     if (deferred) {
-      const self = this;
-      if (_deferredSettingsWriteTimer)
-        clearTimeout(_deferredSettingsWriteTimer);            
-      _deferredSettingsWriteTimer = setTimeout(function() {
-        _deferredSettingsWriteTimer = null;
+      const self = this;      
+      clearTimeout(this._deferredSettingsWriteTimer);            
+      _deferredSettingsWriteTimer = setTimeout(function() {        
         self.settingWrite();
       }, 500);
       return;
@@ -324,19 +326,21 @@ window.MtApp = {
   _addTaskCore: function(type) {    
     const p = this.getPreset();
     const t = window[type].call(this);
+    console.log(t);
     const data = t.createEnvelope();
     const elem = t.createUI();
 
     this._registerTaskUI(elem);    
     this.tlist[t.id] = t;
     p.tasks.push(data);
+    t.init();
 
     this.settingWrite();
-    this.releaseMenu();
+    this.releaseMenu();    
   },
 
   addTaskYt: function() {
-    this._addTaskCore('MtTask'); // default
+    this._addTaskCore('MtTaskYt'); // default
   },
 
 }; // window.MtApp
