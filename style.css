@@ -215,6 +215,18 @@ a:hover {
 .bar .icon {
   color: brown;
 }
+.bar .status i[value="ready"]:before {
+  content: '\f118'; 
+}
+.bar .status i[value="playing"]:before {
+  content: '\f04b'; 
+}
+.bar .status i[value="paused"]:before {
+  content: '\f04c'; 
+}
+.bar .status i[value="ended"]:before {
+  content: '\f04d'; 
+}
 
 /* youtube */
 .task[data-type='MtTaskYt'] .bar {

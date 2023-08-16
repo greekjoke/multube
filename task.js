@@ -12,7 +12,7 @@ window.MtTask = function() {
     ],
 
     statusItems: [
-      { id:'general', html:'<i class="fa-regular fa-face-frown"></i>' }
+      { id:'general', html:'<i class="fa-solid fa-question"></i>' }
     ],
 
     get envelope() { return dataEnv; },
@@ -29,6 +29,8 @@ window.MtTask = function() {
       uiElem.find('.bar .title').text(v);
       app.settingWrite(true);
     },
+
+    get isReady() { return true; },
 
     createEnvelope: function() {
       if (dataEnv)
@@ -86,7 +88,7 @@ window.MtTask = function() {
 
     setStatus: function(statusId, value) {
       statusId = statusId || 'general';
-      
+
       const s = this.statusItems.find(x => {
         return x.id === statusId ? x : undefined;
       });
@@ -97,6 +99,19 @@ window.MtTask = function() {
       s.elem.attr('value', value);
     },
 
-  };
+    isSupport: function(cap) {      
+      return false;
+    },
+    
+    play: function() { },
+    stop: function() { },
+    pause: function() { },
+    mute: function() { },
+    unmute: function() { },
+    speed: function(v) { },
+    duration: function() { return false; },
+    pos: function(v) { },
+
+  }; // object
 
 } // window.MtTask

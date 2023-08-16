@@ -2,6 +2,7 @@
 
 window.MtTaskYt = function() {
   const app = MtApp;
+  const suportCaps = ['playback', 'volume', 'speed', 'position'];
   const parent = MtTask();
 
   const linkParser = function(url) {
@@ -11,13 +12,14 @@ window.MtTaskYt = function() {
   }
 
   const obj = {    
+    playerReady: false,
+
     get type() { return 'MtTaskYt'; },
+    get isReady() { return this.playerReady; },
 
     menuItems: [
       { id:'select', title:'Select video' },      
     ],
-
-    playerReady: false,
 
     command: function(code, target) {
       switch(code) {
@@ -30,7 +32,9 @@ window.MtTaskYt = function() {
       };
     },
 
-    init: function() {            
+    init: function() {   
+      console.log('MtTaskYt.init@1');
+
       parent.init();
 
       this.setStatus('general', 'unready');
@@ -46,7 +50,10 @@ window.MtTaskYt = function() {
       const res = linkParser(link);
       if (!res) return;
 
+      console.log('MtTaskYt.init@2');
+
       const onPlayerReady = function(event) {  
+        console.log('MtTaskYt.init@3');
         self.playerReady = true;
         self.setStatus('general', 'ready');
         const data = self.player.getVideoData();
@@ -69,6 +76,12 @@ window.MtTaskYt = function() {
         width: '100%',
         height: 'auto',
         videoId: res,
+        /*
+        playerVars: {
+          'autoplay': 1,
+          'loop': 1,
+          'mute': 1
+        },*/
         events: {
           'onReady': onPlayerReady,
           'onStateChange': onPlayerStateChange
@@ -77,8 +90,8 @@ window.MtTaskYt = function() {
     },
 
     selectVideo: function() {
-      const self = this;
-      const linkDefault = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+      const self = this;      
+      const linkDefault = this.envelope.link || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
       app.showPrompt('Enter link to youtube video', linkDefault, function(link) {
         const res = linkParser(link);
         if (!res) return;
@@ -87,7 +100,57 @@ window.MtTaskYt = function() {
         app.settingWrite(true);
       });
     },
-  };
+
+    isSupport: function(cap) {      
+      return suportCaps.indexOf(cap) != -1;
+    },
+
+    play: function() { 
+      if (this.player && this.playerReady) {        
+        this.player.playVideo();
+      }
+    },
+
+    stop: function() { 
+      if (this.player && this.playerReady) {        
+        this.player.stopVideo();
+      }
+    },
+    
+    pause: function() { 
+      if (this.player && this.playerReady) {        
+        this.player.pauseVideo();
+      }
+    },
+
+    mute: function() { 
+      if (this.player && this.playerReady) {        
+        this.player.mute();
+      }
+    },
+
+    unmute: function() { 
+      if (this.player && this.playerReady) {        
+        this.player.unMute();
+      }
+    },
+
+    speed: function(v) { 
+      if (this.player && this.playerReady) {          
+        this.player.setPlaybackRate(parseFloat(v));
+      }
+    },
+
+    duration: function() { 
+      // TODO:
+      return false; 
+    },
+
+    pos: function(v) { 
+      // TODO: player.seekTo(seconds:Number, allowSeekAhead:Boolean):Void
+    },
+
+  }; // object
 
   obj.__proto__ = parent;
 

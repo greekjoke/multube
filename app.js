@@ -340,7 +340,48 @@ window.MtApp = {
   },
 
   addTaskYt: function() {
-    this._addTaskCore('MtTaskYt'); // default
+    this._addTaskCore('MtTaskYt');
+  },
+
+  getReadyTasks: function(checkSupport) {
+    const ar = [];
+    
+    for(const i in this.tlist) {
+      const t = this.tlist[i];
+      if (t.isReady && (!checkSupport || t.isSupport(checkSupport))) {
+        ar.push(t)
+      }      
+    }
+
+    return ar;
+  },
+
+  gcPlay: function() {    
+    this.getReadyTasks('playback').forEach(t => t.play());    
+  },
+
+  gcStop: function() {
+    this.getReadyTasks('playback').forEach(t => t.stop());
+  },
+
+  gcPause: function() {
+    this.getReadyTasks('playback').forEach(t => t.pause());    
+  },
+
+  gcMute: function() {
+    this.getReadyTasks('volume').forEach(t => t.mute());
+  },
+
+  gcUnmute: function() {
+    this.getReadyTasks('volume').forEach(t => t.unmute());
+  },
+
+  gcSpeed: function(value) {
+    this.getReadyTasks('speed').forEach(t => t.speed(value));
+  },
+
+  gcRewindRand: function() {
+    // TODO: get duration, set position
   },
 
 }; // window.MtApp
