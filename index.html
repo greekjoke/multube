@@ -13,6 +13,13 @@
   <script src="utils.js"></script>  
   <script src="app.js"></script>  
   <script src="task.js"></script>
+  <script src="taskyt.js"></script>
+  <!--
+  <script src="taskaud.js"></script>
+  <script src="taskread.js"></script>
+  <script src="taskpic.js"></script>
+  <script src="taskifr.js"></script>
+  -->
   <script src="draggable.js"></script>
   <link rel="stylesheet" 
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">  
@@ -103,18 +110,26 @@
       <div class="bar handle">
         <span class="icon"><i class="fa-solid fa-flask"></i></span>
         <span class="title">Untitled</span>
-        <span class="status"><i class="fa-solid fa-battery-three-quarters"></i></span>
+        <span class="status">
+          <!--
+          <i class="fa-solid fa-battery-three-quarters"></i>
+          -->
+        </span>
         <span class="settings menu">
             <ul>
               <li>
                 <i class="fa-solid fa-gear"></i>
-                <ul>
+                <ul class="submenu">
+                  <!--
                   <li action="taskCmd" value="remove">Remove</li>
+                  -->
                 </ul>
               </li>
             </ul>          
         </span>
-        <span class="remove" action="taskCmd" value="remove"><i class="fa-solid fa-xmark"></i></span>
+        <span class="remove button" action="taskCmd" value="remove">
+          <i class="fa-solid fa-xmark pointer-transparent"></i>          
+        </span>
       </div>
       <div class="content">empty</div>
     </div> 
@@ -122,33 +137,6 @@
 
   <div id="widgets">        
     <div class="placeholder">No any tasks here yet</div>
-
-    <!--
-    <div class="task draggable drop-receiver" id="task1">
-      <div class="bar handle">
-        <span class="icon"><i class="fa-solid fa-flask"></i></span>
-        <span class="title">Untitled</span>
-        <span class="status"><i class="fa-solid fa-battery-three-quarters"></i></span>
-        <span class="settings menu">                    
-            <ul>
-              <li>
-                <i class="fa-solid fa-gear"></i>
-                <ul>
-                  <li action="taskCmd" data-id="alpha">Alpha</li>
-                  <li action="taskCmd" data-id="betta">Betta</li>
-                  <li action="taskCmd" data-id="gamma">Gamma</li>
-                </ul>
-              </li>
-            </ul>          
-        </span>
-        <span class="remove"><i class="fa-solid fa-xmark"></i></span>
-      </div>
-      <div class="content">
-        #1
-      </div>
-    </div>      
-    -->    
-    
   </div>
 </body>
 
@@ -182,7 +170,7 @@
         console.error('invalid action', act, ev.target);
       }      
     });
-
+/*
     window.MtDraggable($('#widgets'), {
           sorting: true,
           sortHoriz: true,
@@ -207,7 +195,7 @@
 
           }
     });
-
+*/
   });
 </script>
 

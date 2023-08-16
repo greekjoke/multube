@@ -42,6 +42,9 @@ a:hover {
   pointer-events: none;
   opacity: 0.5;
 }
+.pointer-transparent {
+  pointer-events: none;
+}
 
 /* top menu */
 #topmenu {
@@ -87,14 +90,13 @@ a:hover {
   right: 0;
   top: 40px;
   bottom: 0;  
-  overflow: hidden;
-  z-index: 1;
+  overflow: hidden;  
 }
 
 /* general menu styles */
 .menu ul {
   font-size: 1.0rem;
-  color: black;
+  color: black;  
 }
 .menu li {
   list-style: none;
@@ -123,7 +125,7 @@ a:hover {
   min-width: 220px;
   border: 1px solid #aaa;
   background-color: #eee;  
-  box-shadow: 3px 3px 5px rgba(0,0,0,0.2);
+  box-shadow: 3px 3px 5px rgba(0,0,0,0.2);  
 }
 .menu ul ul li {
   display: block;
@@ -140,6 +142,7 @@ a:hover {
 }
 .menu ul > li:hover > ul {
   display: block;
+  z-index: 99;
 }
 /* sub-sub menu */
 .menu ul ul ul {

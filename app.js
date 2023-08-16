@@ -17,6 +17,8 @@ window.MtApp = {
     ]
   },
 
+  tlist: {},
+
   init: function(opt) {
     opt = opt || {};
     
@@ -28,6 +30,7 @@ window.MtApp = {
 
     this.updateMenuPresets();
     this.updateSwithFlags('#topmenuColors', this.settings.curScheme);
+    this.updatePreset();
   },
 
   releaseMenu: function(menu) {
@@ -68,6 +71,10 @@ window.MtApp = {
     });
   },
 
+  getPreset: function() {
+    return this.getPresetById(this.settings.curPreset);
+  },
+
   updateMenuPresets: function() {     
     const cur = this.settings.curPreset;   
     const htmlCheck = '<i class="fa-solid fa-check"></i>';
@@ -80,7 +87,32 @@ window.MtApp = {
   },
 
   updatePreset: function() {
-    // TODO: update current preset controls and tasks
+    const p = this.getPreset();
+    const con = $('#widgets');
+
+    con.find('.task').remove();
+
+    if (p.tasks.length > 0) {
+      con.find('.placeholder').hide();
+    } else {
+      con.find('.placeholder').show();
+    }
+
+    this.tlist = {};
+
+    for(const i in p.tasks) {
+      const data = p.tasks[i];
+      const fn = window[data.type];
+      if (typeof(fn) !== 'function') {
+        console.error('invalid task type', data.type);
+        continue;
+      }      
+      const t = fn.call(this);
+      t.envelope = data;
+      const elem = t.createUI();
+      this._registerTaskUI(elem);      
+      this.tlist[t.id] = t;
+    }
   },
 
   updateSwithFlags: function(con, value) {
@@ -168,7 +200,19 @@ window.MtApp = {
     this.settingWrite();
   },
 
-  settingWrite: function() {
+  _deferredSettingsWriteTimer: null,
+
+  settingWrite: function(deferred) {
+    if (deferred) {
+      const self = this;
+      if (_deferredSettingsWriteTimer)
+        clearTimeout(_deferredSettingsWriteTimer);            
+      _deferredSettingsWriteTimer = setTimeout(function() {
+        _deferredSettingsWriteTimer = null;
+        self.settingWrite();
+      }, 500);
+      return;
+    }
     const dt = new Date();    
     this.settings.timestamp = dt.getTime();
     if (!MtUtils.storageWrite('mt', this.settings)) {
@@ -219,15 +263,80 @@ window.MtApp = {
 
   removeAllTasks: function() {
     const self = this;
-
+    const p = this.getPreset();
+    const con = $('#widgets');
     this.showConfirm(`Remove all tasks?`, function() {
-      // TOOD      
+      con.find('.task').remove();
+      con.find('.placeholder').show();
+      p.tasks = [];     
+      self.tlist = {};      
+      self.settingWrite();
     });
   },
 
-  addTaskYt: function() {
-    // TODO
+  removeTask: function(id) {
+    const self = this;    
+    const t = this.getTaskById(id);
+    
+    if (!t)
+      return console.error('invalid task id', id);
+
+    this.showConfirm(`Remove this task?`, function() {      
+      self._removeTaskCore(t);      
+    });    
+  },
+
+  _removeTaskCore: function(t) {
+    const p = this.getPreset();
+    t.element.remove();
+    p.tasks.splice(p.tasks.indexOf(t), 1);
+    delete this.tlist[t.id];      
+    this.settingWrite();
+    if (p.tasks.length == 0) {
+      const con = $('#widgets');
+      con.find('.placeholder').show();
+    }
+  },
+
+  getTaskById: function(id) {
+    const t = this.tlist[id];
+    return typeof(t) !== undefined ? t : false;
+  },
+
+  taskCmd: function(code, target) {
+    const elem = $(target).closest('.task');
+    const id = elem.attr('id');
+    const t = this.getTaskById(id);
+    t.command(code, target);
+  },
+
+  _registerTaskUI: function(elem) {
+    const p = this.getPreset();
+    const con = $('#widgets');
+    
+    if (!p.tasks.length) {
+      con.find('.placeholder').hide();
+    }
+
+    con.append(elem);    
+  },
+
+  _addTaskCore: function(type) {    
+    const p = this.getPreset();
+    const t = window[type].call(this);
+    const data = t.createEnvelope();
+    const elem = t.createUI();
+
+    this._registerTaskUI(elem);    
+    this.tlist[t.id] = t;
+    p.tasks.push(data);
+
+    this.settingWrite();
     this.releaseMenu();
+  },
+
+  addTaskYt: function() {
+    this._addTaskCore('MtTask'); // default
   },
 
 }; // window.MtApp
