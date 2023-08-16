@@ -31,8 +31,16 @@ a:hover {
   padding: 2px 5px;
 }
 
+/* helpers */
 .inline {
   display: inline;
+}
+.button {
+  cursor: pointer;
+}
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 /* top menu */
@@ -80,10 +88,7 @@ a:hover {
   top: 40px;
   bottom: 0;  
   overflow: hidden;
-}
-
-.button {
-  cursor: pointer;
+  z-index: 1;
 }
 
 /* general menu styles */
@@ -104,6 +109,14 @@ a:hover {
 }
 .menu ul ul li > b:after {
   content: ' \000BB';  
+}
+.menu li[flag] i {
+  padding-right: 0.3em;
+  vertical-align: top;
+  visibility: hidden;
+}
+.menu li[flag="1"] i {
+  visibility: visible;
 }
 /* submenu */
 .menu ul ul {

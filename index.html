@@ -20,7 +20,7 @@
   <link rel="icon" type="image/ico" href="favicon.ico"/>  
 </head>
 
-<body>
+<body color-scheme="default">
   <header>
     <div id="logo"><img src="media/logo.svg"/></div>
     <div id="title"><h1>MulTube</h1></div>
@@ -59,9 +59,9 @@
             <li action="settingsFromFile">Import from file</li>            
             <li>
               <b>Color scheme</b>              
-              <ul action="switchColors">               
-                <li value="default">Light</li>
-                <li value="dark">Dark</li>
+              <ul action="switchColors" id="topmenuColors">               
+                <li value="default" flag="1"><i class="fa-solid fa-check"></i>Light</li>
+                <li value="dark" flag="0"><i class="fa-solid fa-check"></i>Dark</li>
               </ul>
             </li>            
           </ul>          
@@ -180,7 +180,7 @@
 
       if (!fn) {
         console.error('invalid action', act, ev.target);
-      }
+      }      
     });
 
     window.MtDraggable($('#widgets'), {
