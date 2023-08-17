@@ -357,27 +357,27 @@ window.MtApp = {
   },
 
   gcPlay: function() {    
-    this.getReadyTasks('playback').forEach(t => t.play());    
+    this.getReadyTasks(MtTask.CAPS.PLAYBACK).forEach(t => t.play());    
   },
 
   gcStop: function() {
-    this.getReadyTasks('playback').forEach(t => t.stop());
+    this.getReadyTasks(MtTask.CAPS.PLAYBACK).forEach(t => t.stop());
   },
 
   gcPause: function() {
-    this.getReadyTasks('playback').forEach(t => t.pause());    
+    this.getReadyTasks(MtTask.CAPS.PLAYBACK).forEach(t => t.pause());    
   },
 
   gcMute: function() {
-    this.getReadyTasks('volume').forEach(t => t.mute());
+    this.getReadyTasks(MtTask.CAPS.VOLUME).forEach(t => t.mute());
   },
 
   gcUnmute: function() {
-    this.getReadyTasks('volume').forEach(t => t.unmute());
+    this.getReadyTasks(MtTask.CAPS.VOLUME).forEach(t => t.unmute());
   },
 
   gcSpeed: function(value) {
-    this.getReadyTasks('speed').forEach(t => t.speed(value));
+    this.getReadyTasks(MtTask.CAPS.SPEED).forEach(t => t.speed(value));
   },
 
   gcRewindRand: function() {

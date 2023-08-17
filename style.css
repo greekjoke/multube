@@ -105,6 +105,11 @@ a:hover {
   margin: 0 5px;
   cursor: pointer;
 }
+.menu li[value] {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;  
+}
 .menu ul ul li > b {
   font-weight: bold;
   color: black;
@@ -122,7 +127,7 @@ a:hover {
 }
 /* submenu */
 .menu ul ul {
-  min-width: 220px;
+  width: 220px;
   border: 1px solid #aaa;
   background-color: #eee;  
   box-shadow: 3px 3px 5px rgba(0,0,0,0.2);  
