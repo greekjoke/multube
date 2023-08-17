@@ -45,7 +45,7 @@ window.MtApp = {
     setTimeout(() => $(menu).removeClass('disabled'), 100);
   },
 
-  releaseMenuGc: function() {
+  releaseMenuGc: function() {    
     this.releaseMenu($('#gcMenuSpeed'));
   },
 
@@ -125,6 +125,8 @@ window.MtApp = {
       t.init();
       this.onTaskAdded(t);
     }
+
+    this.updateGlobalCaps();
   },
 
   updateSwithFlags: function(con, value) {
@@ -278,6 +280,7 @@ window.MtApp = {
     this.showConfirm(`Remove all tasks?`, function() {
       con.find('.task').remove();
       con.find('.placeholder').show();
+      p.tasks.forEach(x => self.onTaskRemoved(x));
       p.tasks = [];     
       self.tlist = {};      
       self.settingWrite();
@@ -303,6 +306,7 @@ window.MtApp = {
     p.tasks.splice(i, 1);
     delete this.tlist[t.id];      
     this.settingWrite();
+    this.onTaskRemoved(t);
     if (p.tasks.length == 0) {
       const con = $('#widgets');
       con.find('.placeholder').show();
@@ -335,7 +339,6 @@ window.MtApp = {
   _addTaskCore: function(type) {    
     const p = this.getPreset();
     const t = window[type].call(this);
-    console.log(t);
     const data = t.createEnvelope();
     const elem = t.createUI();
 
@@ -352,6 +355,12 @@ window.MtApp = {
   addTaskYt: function() {
     this._addTaskCore('MtTaskYt');
   },
+
+  addTaskAudio: function() {
+    this._addTaskCore('MtTaskAudio');
+  },
+
+  // TODO: picture, iframe, text reading
 
   getReadyTasks: function(checkSupport) {
     const ar = [];
@@ -386,8 +395,8 @@ window.MtApp = {
     this.getReadyTasks(MtTask.CAPS.VOLUME).forEach(t => t.unmute());
   },
 
-  gcSpeed: function(value) {
-    this.getReadyTasks(MtTask.CAPS.SPEED).forEach(t => t.speed(value));
+  gcSpeed: function(value) {    
+    this.getReadyTasks(MtTask.CAPS.SPEED).forEach(t => t.speed(value));    
     this.releaseMenuGc();
   },
 
@@ -442,6 +451,11 @@ window.MtApp = {
 
   onTaskAdded: function(t) {
     this.setupDragging();
+    this.updateGlobalCaps();
+  },
+
+  onTaskRemoved: function(t) {
+    this.updateGlobalCaps();
   },
 
   setupDragging: function() {
@@ -488,6 +502,26 @@ window.MtApp = {
     const id = $(elem).closest('.task').attr('id');
     const i = p.tasks.findIndex(x => x.id == id);
     return i;
+  },
+
+  updateGlobalCaps: function() {
+    const self = this;
+    const con = $('body');
+    const p = this.getPreset();
+    const caps = window.MtTask.CAPS;
+    
+    con.removeClass(`cap-${caps.PLAYBACK} cap-${caps.VOLUME} cap-${caps.SPEED} cap-${caps.POSITION}`);
+
+    p.tasks.forEach(x => {
+      const t = self.tlist[x.id];
+      if (!t) return;
+      for(const k in caps) {
+        const str = caps[k];
+        if (t.isSupport(str)) {
+          con.addClass(`cap-${str}`);
+        }
+      }
+    });
   },
 
 }; // window.MtApp

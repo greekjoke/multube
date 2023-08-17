@@ -14,8 +14,8 @@
   <script src="app.js"></script>  
   <script src="task.js"></script>
   <script src="taskyt.js"></script>
-  <!--
   <script src="taskaud.js"></script>
+  <!--  
   <script src="taskread.js"></script>
   <script src="taskpic.js"></script>
   <script src="taskifr.js"></script>
@@ -174,32 +174,7 @@
         console.error('invalid action', act, ev.target);
       }      
     });
-/*
-    window.MtDraggable($('#widgets'), {
-          sorting: true,
-          sortHoriz: true,
-          onDrop: function (movId, recv) {
-              const target = $('#' + movId);
 
-              if (target.length != 1) {
-                  console.error('drop target not found', movId, recv);
-                  return;
-              }
-
-              const dropBefore = recv.hasClass('drop-before');
-
-              // вставляем в дерево
-              if (dropBefore) {
-                  target.insertBefore(recv);
-              } else {
-                  target.insertAfter(recv);
-              }
-
-              // TODO: пересчитываем массив задач и сохраняем настройки
-
-          }
-    });
-*/
   });
 </script>
 
