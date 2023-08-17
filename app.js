@@ -14,11 +14,14 @@ window.MtApp = {
         name: 'Default',
         tasks: [],
       },      
-    ]
+    ],
+    recent: {},    
   },
 
   tlist: {},
   ready: false,
+  maxRecentItems: 10,
+  samples: {},
 
   init: function(opt) {
     opt = opt || {};
@@ -378,10 +381,49 @@ window.MtApp = {
 
   gcSpeed: function(value) {
     this.getReadyTasks(MtTask.CAPS.SPEED).forEach(t => t.speed(value));
+    this.releaseMenu($('#gcMenuSpeed'));
   },
 
   gcRewindRand: function() {
     // TODO: get duration, set position
   },
+
+  getSamples: function(type) {    
+    return this.samples[type] || [];
+  },
+
+  getRecent: function(type) {    
+    return this.settings.recent[type] || [];
+  },
+
+  addRecent: function(type, title, value) { 
+    const r = this.settings.recent[type] || [];
+    const index = r.findIndex(x => x.value === value);
+    let item = { title:title, value:value };
+    
+    if (index != -1) {        
+      if (index === 0)
+        return; // no any moves needed          
+      item = r.splice(index, 1).pop(); // take exists item
+    }
+    
+    r.unshift(item); // put at the start of an array
+
+    if (r.length > this.maxRecentItems) {
+      r.splice(this.maxRecentItems); // remove last one    
+    }
+
+    console.log('addRecent@5', item, r);
+
+    this.settings.recent[type] = r;
+    this.settingWrite(true);
+
+    for(const i in this.tlist) {
+      const t = this.tlist[i];
+      t.createMenuRecent(); // rebuild
+    }
+  },
+
+  
 
 }; // window.MtApp

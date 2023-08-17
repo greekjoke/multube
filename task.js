@@ -38,9 +38,7 @@ window.MtTask = function() {
       return dataEnv = {
         id: MtUtils.genUid(),
         type: this.type,
-        title: 'Untitled',
-        recent: [],
-        samples: [],
+        title: 'Untitled',        
       };
     },
 
@@ -62,9 +60,9 @@ window.MtTask = function() {
       this.menuItems.forEach(x => {
         menuElem.append(`<li action="taskCmd" value="${x.id}">${x.title}</li>`);
       });
-
-      this.createMenuRecent(menuElem);
-      this.createMenuSamples(menuElem);
+      
+      this.createMenuSamples(elem);
+      this.createMenuRecent(elem);
 
       const statusElem = elem.find('.bar .status');
 
@@ -76,23 +74,48 @@ window.MtTask = function() {
       return uiElem = elem;      
     },
 
-    createMenuRecent: function(m) {
-      if (dataEnv.recent.length < 1)
+    createMenuRecent: function(elem) {
+      elem = elem || uiElem;
+
+      const m = elem.find('.bar .settings .submenu');
+      const r = app.getRecent(this.type);
+
+      m.find('li.recent').remove(); // remove old menu
+
+      if (r.length < 1)
         return;
 
       const sub = $('<ul action="taskCmd"></ul>');
 
-      dataEnv.recent.forEach(x => {
+      r.forEach(x => {
         sub.append(`<li value="${x.value}">${x.title}</li>`);
       });
-
-      const item = $('<li><b>Recent</b></li>');
+      
+      const item = $('<li class="recent"><b>Recent</b></li>');
       item.append(sub);
       m.append(item);
     },
 
-    createMenuSamples: function(m) {
-      // TODO:
+    createMenuSamples: function(elem) {
+      elem = elem || uiElem;
+
+      const m = elem.find('.bar .settings .submenu');
+      const r = app.getSamples(this.type);
+
+      m.find('li.samples').remove(); // remove old menu
+
+      if (r.length < 1)
+        return;
+
+      const sub = $('<ul action="taskCmd"></ul>');
+
+      r.forEach(x => {
+        sub.append(`<li value="${x.value}">${x.title}</li>`);
+      });
+      
+      const item = $('<li class="samples"><b>Samples</b></li>');
+      item.append(sub);
+      m.append(item);
     },
 
     releaseMenu: function() {
@@ -129,28 +152,7 @@ window.MtTask = function() {
     },
 
     addRecent: function(title, value) {
-      dataEnv.recent = dataEnv.recent || [];
-
-      const index = dataEnv.recent.findIndex(x => x.value === value);
-      let item = { title:title, value:value };
-      
-      if (index != -1) {        
-        if (index === 0)
-          return; // no any moves needed          
-        item = dataEnv.recent.splice(index, 1).pop(); // take exists item
-      }
-      
-      dataEnv.recent.unshift(item); // put at the start of an array
-
-      if (dataEnv.recent.length > 10) {
-        dataEnv.recent.splice(10); // remove last one    
-      }
-
-      console.log('addRecent@5', item, dataEnv.recent);
-
-      app.settingWrite(true);
-
-      // TODO: rebuild menu
+      app.addRecent(this.type, title, value);      
     },
 
     isSupport: function(cap) {      
