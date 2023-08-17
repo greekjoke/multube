@@ -114,5 +114,5 @@ window.MtDraggable = function(area, opt) {
 
   });  
   
-  return {  } 
+  return {  };
 }

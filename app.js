@@ -45,6 +45,10 @@ window.MtApp = {
     setTimeout(() => $(menu).removeClass('disabled'), 100);
   },
 
+  releaseMenuGc: function() {
+    this.releaseMenu($('#gcMenuSpeed'));
+  },
+
   showPrompt: function(text, def, fnOk, fnCancel) {
     fnCancel = fnCancel || function() {};
     const str = window.prompt(text, def || '');    
@@ -119,6 +123,7 @@ window.MtApp = {
       this._registerTaskUI(elem);      
       this.tlist[t.id] = t;
       t.init();
+      this.onTaskAdded(t);
     }
   },
 
@@ -166,7 +171,7 @@ window.MtApp = {
       return console.error('invalid preset id', cur);
 
     const ar = this.settings.presets;
-    const index = ar.indexOf(p);
+    const index = ar.findIndex(x => x.id == p.id);
 
     this.showConfirm(`Remove preset "${p.name}"?`, function() {
       ar.splice(index, 1);
@@ -217,7 +222,7 @@ window.MtApp = {
         self.settingWrite();
       }, 500);
       return;
-    }
+    }    
     const dt = new Date();    
     this.settings.timestamp = dt.getTime();
     if (!MtUtils.storageWrite('mt', this.settings)) {
@@ -282,7 +287,7 @@ window.MtApp = {
   removeTask: function(id) {
     const self = this;    
     const t = this.getTaskById(id);
-    
+
     if (!t)
       return console.error('invalid task id', id);
 
@@ -294,7 +299,8 @@ window.MtApp = {
   _removeTaskCore: function(t) {
     const p = this.getPreset();
     t.element.remove();
-    p.tasks.splice(p.tasks.indexOf(t), 1);
+    const i = p.tasks.findIndex(x => x.id == t.id);
+    p.tasks.splice(i, 1);
     delete this.tlist[t.id];      
     this.settingWrite();
     if (p.tasks.length == 0) {
@@ -339,7 +345,8 @@ window.MtApp = {
     t.init();
 
     this.settingWrite();
-    this.releaseMenu();    
+    this.releaseMenu();     
+    this.onTaskAdded(t);
   },
 
   addTaskYt: function() {
@@ -381,11 +388,17 @@ window.MtApp = {
 
   gcSpeed: function(value) {
     this.getReadyTasks(MtTask.CAPS.SPEED).forEach(t => t.speed(value));
-    this.releaseMenu($('#gcMenuSpeed'));
+    this.releaseMenuGc();
   },
 
   gcRewindRand: function() {
-    // TODO: get duration, set position
+    const list = this.getReadyTasks(MtTask.CAPS.POSITION);
+    list.forEach(t => {
+      const d = t.duration();
+      const lim = d / 3 * 2; // use first 2/3 of time
+      const p = MtUtils.getRandomInt(0, lim);
+      t.pos(p);
+    });
   },
 
   getSamples: function(type) {    
@@ -402,9 +415,12 @@ window.MtApp = {
     let item = { title:title, value:value };
     
     if (index != -1) {        
+      /*
       if (index === 0)
         return; // no any moves needed          
       item = r.splice(index, 1).pop(); // take exists item
+      */
+      return;
     }
     
     r.unshift(item); // put at the start of an array
@@ -424,6 +440,54 @@ window.MtApp = {
     }
   },
 
-  
+  onTaskAdded: function(t) {
+    this.setupDragging();
+  },
+
+  setupDragging: function() {
+    const self = this;
+    const con = $('#widgets');
+
+    con.unbind();
+    con.find('.draggable').unbind();
+    con.find('.drop-receiver').unbind();
+    con.find('.handle').unbind();
+    con.removeClass('drag-area');
+
+    window.MtDraggable($('#widgets'), {
+      sorting: true,
+      sortHoriz: true,
+      onDrop: function (movId, recv) {
+          const target = $('#' + movId);
+
+          if (target.length != 1) {
+              console.error('drop target not found', movId, recv);
+              return;
+          }
+
+          const a = self._getElemTaskIndex(target);
+          const b = self._getElemTaskIndex(recv);
+          const p = self.getPreset();
+          const list = p.tasks;
+          const t = list.splice(a, 1)[0];
+          list.splice(b, 0, t);
+          
+          if (a < b) {
+            target.insertAfter(recv);            
+          } else {
+            target.insertBefore(recv);            
+          }
+
+          self.settingWrite(true);
+      }
+    });
+  },
+
+  _getElemTaskIndex: function(elem) {
+    const p = this.getPreset();
+    const id = $(elem).closest('.task').attr('id');
+    const i = p.tasks.findIndex(x => x.id == id);
+    return i;
+  },
 
 }; // window.MtApp

@@ -67,11 +67,11 @@ window.MtTaskYt = function() {
         console.log('MtTaskYt.init@3');
         self.playerReady = true;
         self.setStatus('general', 'ready');
-        const data = self.player.getVideoData();
-        if (data.title) {
-          self.title = data.title;
-          self.addRecent(self.title, self.link);
-        }
+        const data = self.player.getVideoData();        
+        if (data.title && data.title !== self.title) {
+          self.title = data.title;          
+        }        
+        self.addRecent(self.title, self.link);
       };
     
       const onPlayerStateChange = function(event) {        
@@ -85,8 +85,8 @@ window.MtTaskYt = function() {
       };
 
       this.player = new YT.Player(dom, {
-        width: '100%',
-        height: 'auto',
+        width: 'auto',
+        height: '100%',
         videoId: res,
         /*
         playerVars: {
@@ -160,12 +160,15 @@ window.MtTaskYt = function() {
     },
 
     duration: function() { 
-      // TODO:
+      if (this.player && this.playerReady) {
+        return this.player.getDuration();
+      }
       return false; 
     },
 
     pos: function(v) { 
-      // TODO: player.seekTo(seconds:Number, allowSeekAhead:Boolean):Void
+      const seconds = parseInt(v || 0);
+      this.player.seekTo(seconds, true);
     },
 
   }; // object
