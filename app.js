@@ -365,6 +365,10 @@ window.MtApp = {
     this._addTaskCore('MtTaskPic');
   },
 
+  addTaskFrame: function() {
+    this._addTaskCore('MtTaskFrame');
+  },
+
   // TODO: picture, iframe, text reading
 
   getReadyTasks: function(checkSupport) {

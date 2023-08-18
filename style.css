@@ -298,3 +298,25 @@ body.cap-position #gctrl i[action="gcRewindRand"]
 .task[data-type='MtTaskPic'] .bar .icon i:before {
   content: "\f03e";  
 }
+.task[data-type='MtTaskPic'] img {
+  /*
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  */
+}
+
+/* iFrame */
+.task[data-type='MtTaskFrame'] .bar {
+  background-color: #eae;
+}
+.task[data-type='MtTaskFrame'] .bar .icon {
+  color: blue;
+}
+.task[data-type='MtTaskFrame'] .bar .icon i:before {
+  content: "\f0ac";  
+}
+.task[data-type='MtTaskFrame'] iframe {
+  width: 100%;
+  height: 100%;
+}

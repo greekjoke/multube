@@ -96,7 +96,7 @@ window.MtTask = function() {
       const sub = $('<ul action="taskCmd"></ul>');
 
       r.forEach(x => {
-        sub.append(`<li value="${x.value}">${x.title}</li>`);
+        sub.append(`<li value="${x.value}" title="${x.title}">${x.title}</li>`);
       });
       
       const item = $('<li class="recent"><b>Recent</b></li>');
