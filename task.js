@@ -55,12 +55,7 @@ window.MtTask = function() {
       elem.attr('data-type', dataEnv.type);
       elem.find('.bar .title').text(dataEnv.title);
 
-      const menuElem = elem.find('.bar .settings .submenu');
-
-      this.menuItems.forEach(x => {
-        menuElem.append(`<li action="taskCmd" value="${x.id}">${x.title}</li>`);
-      });
-      
+      this.createMenuItems(elem);      
       this.createMenuSamples(elem);
       this.createMenuRecent(elem);
 
@@ -72,6 +67,19 @@ window.MtTask = function() {
       });
       
       return uiElem = elem;      
+    },
+
+    createMenuItems: function(elem) {
+      const menuElem = elem.find('.bar .settings .submenu');
+      const htmlCheck = '<i class="fa-solid fa-check"></i>';
+      this.menuItems.forEach(x => {
+        if (x.bool) {
+          menuElem.append(`<li action="taskCmd" value="${x.id}" flag="0">${htmlCheck}${x.title}</li>`);
+          menuElem.addClass('has-flags');
+        } else {
+          menuElem.append(`<li action="taskCmd" value="${x.id}">${x.title}</li>`);
+        }
+      });
     },
 
     createMenuRecent: function(elem) {
@@ -121,6 +129,11 @@ window.MtTask = function() {
     releaseMenu: function() {
       const m = uiElem.find('.bar .settings');
       app.releaseMenu(m);
+    },
+
+    setMenuCheck: function(id, flag) {
+      const menuElem = uiElem.find('.bar .settings .submenu');
+      menuElem.find(`li[value="${id}"]`).attr('flag', flag ? '1' : '0');
     },
 
     init: function() {

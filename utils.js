@@ -142,4 +142,32 @@ window.MtUtils = {
     input.click();
   },
 
+  selectFile: function(fnLoaded, ext) {
+    const self = this;
+    const input = document.createElement('input');    
+
+    document.body.appendChild(input);
+
+    const cleanHtml = function() {
+      input.remove();   
+    };
+
+    $(input).change(function() {
+      let files = input.files; 
+
+      if (files.length == 0) {
+        fnLoaded.call(self, null);
+      } else {
+        const file = files[0]; 
+        fnLoaded.call(self, file);
+      }
+
+      cleanHtml();
+    });
+
+    input.type = 'file'; 
+    input.accept = ext || '.txt';
+    input.click();
+  },
+
 };

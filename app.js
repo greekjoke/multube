@@ -279,10 +279,11 @@ window.MtApp = {
     const con = $('#widgets');
     this.showConfirm(`Remove all tasks?`, function() {
       con.find('.task').remove();
-      con.find('.placeholder').show();
-      p.tasks.forEach(x => self.onTaskRemoved(x));
+      con.find('.placeholder').show();      
+      const removed = p.tasks;
       p.tasks = [];     
       self.tlist = {};      
+      removed.forEach(x => self.onTaskRemoved(x));
       self.settingWrite();
     });
   },
@@ -454,7 +455,7 @@ window.MtApp = {
     this.updateGlobalCaps();
   },
 
-  onTaskRemoved: function(t) {
+  onTaskRemoved: function(t) {    
     this.updateGlobalCaps();
   },
 
