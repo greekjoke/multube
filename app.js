@@ -369,7 +369,9 @@ window.MtApp = {
     this._addTaskCore('MtTaskFrame');
   },
 
-  // TODO: picture, iframe, text reading
+  addTaskText: function() {
+    this._addTaskCore('MtTaskRead');
+  },
 
   getReadyTasks: function(checkSupport) {
     const ar = [];

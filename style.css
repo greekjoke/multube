@@ -320,3 +320,14 @@ body.cap-position #gctrl i[action="gcRewindRand"]
   width: 100%;
   height: 100%;
 }
+
+/* Text */
+.task[data-type='MtTaskRead'] .bar {
+  background-color: #7ee;
+}
+.task[data-type='MtTaskRead'] .bar .icon {
+  color: #333;
+}
+.task[data-type='MtTaskRead'] .bar .icon i:before {
+  content: "\f031";  
+}

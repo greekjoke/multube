@@ -142,7 +142,7 @@ window.MtTaskAudio = function() {
         if (this.title !== 'Untitled') {
           this.content.html(`<div>Data has not been saved</div>`);
         } else {
-          this.content.html('empty'); // clear
+          this.content.html('empty');
         }
         return;
       }
