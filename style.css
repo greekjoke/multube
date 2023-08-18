@@ -284,3 +284,6 @@ body.cap-position #gctrl i[action="gcRewindRand"]
 .task[data-type='MtTaskAudio'] .bar .icon i:before {
   content: "\f001";  
 }
+.task[data-type='MtTaskAudio'] audio {
+  width: 100%;
+}

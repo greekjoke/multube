@@ -40,7 +40,15 @@ window.MtTaskAudio = function() {
       return suportCaps.indexOf(cap) != -1;
     },
 
-    command: function(code, target) {      
+    command: function(code, target) {
+      if (code.toLowerCase().indexOf('http') === 0 ||
+          code.toLowerCase().indexOf('media/') === 0) 
+      {
+        this.title = $(target).text();
+        this.switchToLink(code);  
+        this.releaseMenu();
+        return;
+      }      
       switch(code) {
         case 'load':
           this.loadFromFile();
@@ -95,8 +103,9 @@ window.MtTaskAudio = function() {
       MtUtils.selectFile(async (file) => {
         if (file === null) return; // cancel
         
-        try {
-          const url = await toBase64(file);
+        try {          
+          self.title = file.name;
+          const url = await toBase64(file);          
           self.switchToLink(url);          
        } catch(error) {
           console.error(error);
@@ -128,12 +137,21 @@ window.MtTaskAudio = function() {
 
       link = link || this.envelope.link;            
       console.log('MtTaskAudio.init@2', link ? link.substr(0, 20) : false);
-      if (!link) return;
+      
+      if (!link) {
+        if (this.title !== 'Untitled') {
+          this.content.html(`<div>Data has not been saved</div>`);
+        }
+        return;
+      }
 
       this.audioElem = $('<audio controls="controls"></audio>')[0];
 
-      $(this.audioElem).on('canplay ended pause play', e => {
+      $(this.audioElem).on('canplay ended pause play loadedmetadata', e => {
         switch(e.type) {
+          case 'loadedmetadata':
+            //console.log('meta', e);
+            break;
           case 'canplay':
             self.playerReady = true;
             self.setStatus('general', 'ready');
@@ -150,6 +168,7 @@ window.MtTaskAudio = function() {
         }        
       });
 
+      this.audioElem.crossOrigin = "anonymous";
       this.audioElem.src = link;
 
       this.content.append(this.audioElem);
@@ -220,12 +239,17 @@ window.MtTaskAudio = function() {
     },
 
     duration: function() { 
-      // TODO:      
+      if (this.audioElem && this.isReady) {
+        return this.audioElem.duration;
+      }
       return false; 
     },
 
     pos: function(v) { 
-      // TODO:
+      if (this.audioElem && this.isReady) {
+        const seconds = parseInt(v || 0);
+        return this.audioElem.currentTime = seconds;
+      }      
     },
 
   }; // object
