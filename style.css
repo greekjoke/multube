@@ -287,3 +287,14 @@ body.cap-position #gctrl i[action="gcRewindRand"]
 .task[data-type='MtTaskAudio'] audio {
   width: 100%;
 }
+
+/* picture */
+.task[data-type='MtTaskPic'] .bar {
+  background-color: #ee7;
+}
+.task[data-type='MtTaskPic'] .bar .icon {
+  color: darkred;
+}
+.task[data-type='MtTaskPic'] .bar .icon i:before {
+  content: "\f03e";  
+}

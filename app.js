@@ -361,6 +361,10 @@ window.MtApp = {
     this._addTaskCore('MtTaskAudio');
   },
 
+  addTaskPic: function() {
+    this._addTaskCore('MtTaskPic');
+  },
+
   // TODO: picture, iframe, text reading
 
   getReadyTasks: function(checkSupport) {
