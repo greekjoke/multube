@@ -9,7 +9,9 @@
   <script src="https://code.jquery.com/jquery-2.2.4.min.js"
     integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
     crossorigin="anonymous"></script>
-  <script src="https://www.youtube.com/iframe_api"></script>       
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jschardet/3.0.0/jschardet.min.js"></script>  -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/iconv-lite@0.6.3/lib/index.min.js"></script>    -->
   <script src="utils.js"></script>  
   <script src="app.js"></script>  
   <script src="task.js"></script>
@@ -135,6 +137,10 @@
 <script>
   $(document).ready(function() {
 
+    if (MtUtils.isMobile()) {
+      $('body').addClass('mobile');
+    }
+
     MtApp.samples = {
       'MtTaskYt': [
         { value: 'https://youtu.be/3iC4qBOmZ_Q', title: 'Арам-зам-зам' },     
@@ -162,6 +168,10 @@
         { value: 'https://greekjoke.github.io/counter/', title: 'Счётчик' },   
         { value: 'https://greekjoke.github.io/pub/carousel/', title: 'Карусель эмоций' },   
         { value: 'https://greekjoke.github.io/pub/carousel/peekaboo.html', title: 'Уагадай эмоцию' },           
+      ],
+      'MtTaskRead': [
+        { value: 'media/01.txt', title: 'Отрывок (utf8)' },   
+        { value: 'media/01_win.txt', title: 'Отрывок (win1251)' },   
       ],
     };
 

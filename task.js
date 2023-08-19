@@ -63,6 +63,7 @@ window.MtTask = function() {
 
       this.statusItems.forEach(x => {
         x.elem = $(x.html);
+        x.elem.addClass('status-'+x.id);
         statusElem.append(x.elem);
       });
       

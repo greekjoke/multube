@@ -5,11 +5,26 @@ window.MtTaskAudio = function() {
   const suportCaps = [MtTask.CAPS.PLAYBACK, MtTask.CAPS.VOLUME, MtTask.CAPS.SPEED, MtTask.CAPS.POSITION];
   const parent = MtTask();
 
+  const isRemoteLink = function(link) {
+    return link.toLowerCase().indexOf('http') === 0 ||
+           link.toLowerCase().indexOf('media/') === 0;
+  };
+
   const toBase64 = file => new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => resolve(reader.result);
     reader.onerror = reject;
+  });
+
+  parent.statusItems.unshift({ 
+    id:'right', 
+    html:'<i class="fa-solid fa-arrow-right"></i>' 
+  });
+
+  parent.statusItems.unshift({ 
+    id:'left', 
+    html:'<i class="fa-solid fa-arrow-left"></i>' 
   });
 
   const obj = {        
@@ -32,7 +47,7 @@ window.MtTaskAudio = function() {
       this.envelope.balance = v; 
       if (this.stereoNode)
         this.stereoNode.pan.value = v;
-      this.updateBalanceMenu();
+      this.updateBalanceMenu();      
       app.settingWrite(true);
     },
 
@@ -41,9 +56,7 @@ window.MtTaskAudio = function() {
     },
 
     command: function(code, target) {
-      if (code.toLowerCase().indexOf('http') === 0 ||
-          code.toLowerCase().indexOf('media/') === 0) 
-      {
+      if (isRemoteLink(code)) {
         this.title = $(target).text();
         this.switchToLink(code);  
         this.releaseMenu();
@@ -88,13 +101,19 @@ window.MtTaskAudio = function() {
       if (v == -1) {
         this.setMenuCheck('left', 1);
         this.setMenuCheck('right', 0);
+        this.setStatus('left', 1);
+        this.setStatus('right', 0);
       } else if (v == 1) {
         this.setMenuCheck('left', 0);
         this.setMenuCheck('right', 1);
+        this.setStatus('left', 0);
+        this.setStatus('right', 1);
       } else {
         this.setMenuCheck('left', 1);
         this.setMenuCheck('right', 1);
-      }
+        this.setStatus('left', 1);
+        this.setStatus('right', 1);
+      }      
     },
 
     loadFromFile: function() {
@@ -192,7 +211,7 @@ window.MtTaskAudio = function() {
 
     switchToLink: function(link) {      
       if (!link) return false;
-      const save = (link.toLowerCase().indexOf('http') === 0);
+      const save = isRemoteLink(link);
       if (save) {
         if (this.envelope.link == link) return false;
         this.envelope.link = link;   

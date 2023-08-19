@@ -10,6 +10,26 @@ window.MtTaskRead = function() {
     return link.toLowerCase().indexOf('http') === 0 ||
            link.toLowerCase().indexOf('media/') === 0;
   };
+/*
+  const getRemoteText = function(link, cb) {
+    $.get(link, function(res) {      
+      cb(res);
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+      console.error(link, errorThrown);
+      app.showError('Request failed: ' + link);
+    });
+  };
+*/
+  const getRemoteText = function(link, cb) {
+    const oReq = new XMLHttpRequest();
+    oReq.open("GET", link, true);
+    oReq.responseType = "arraybuffer";
+    oReq.onload = function(oEvent) {
+      var arrayBuffer = oReq.response;
+      cb(arrayBuffer);    
+    };
+    oReq.send();
+  };
 
   const obj = {        
     dataReady: false,
@@ -19,8 +39,22 @@ window.MtTaskRead = function() {
     get link() { return this.envelope.link; },
         
     menuItems: [
-      { id:'select', title:'Select internet text' },    
-      { id:'load', title:'Load from file' },      
+      { id:'load', title:'Load from file' },
+      { id:'select', title:'Select internet text' },          
+      { id:'rtext', title:'Reverse text', bool:true },
+      { id:'rword', title:'Reverse word', bool:true },
+      { id:'mhoriz', title:'Mirror horizontal', bool:true },
+      { id:'mvert', title:'Mirror vertical', bool:true },
+      /*
+      { id:'enc', title:'Encoding' },
+      { id:'utf8', title:'UTF-8', bool:true },
+      { id:'win1251', title:'windows-1251', bool:true },
+      */
+      { id:'voice', title:'Voice text', bool:true },
+      /*      
+      { id:'vtype', title:'Voice type', },
+      { id:'vpitch', title:'Voice pitch', },
+      */
     ],
 
     isSupport: function(cap) {      
@@ -48,24 +82,13 @@ window.MtTaskRead = function() {
 
     loadFromFile: function() {      
       const self = this;
-
-      MtUtils.selectFile(async (file) => {
-        if (file === null) return; // cancel
-        
-        try {          
-          self.title = file.name;
-
-          // TODO:
-
-          /*
-          const url = await toBase64(file);
-          self.switchToLink(url);          
-          */
-       } catch(error) {
-          console.error(error);
-          return;
-       }
-          
+      MtUtils.loadFromFile((e, file) => {
+        if (e === null) return; // cancel
+        const text = 'raw:' + e.target.result;
+        self.title = file.name;
+        self.switchToLink(text);
+      }, (e) => {
+        console.error(e);
       }, '.txt');
     },
 
@@ -93,10 +116,35 @@ window.MtTaskRead = function() {
         return;
       }
 
-      
-      // TODO
+      const onTextReady = function(text) {        
+        self.dataReady = true;
+        self.setStatus('general', 'ready');
+        
+        //let utf8Encode = new TextEncoder();
+        //const buf = utf8Encode.encode(text);
+        
+        console.log('onTextReady', text);
+
+        //let td = new TextDecoder('windows-1251');
+        let td = new TextDecoder('utf-8');
+        text = td.decode(text);
+
+        
 
 
+        // TODO: detect encoding
+        self.content.text(text); // test      
+        
+      };
+
+      if (link.indexOf('raw:') === 0) {
+        link = link.substr(4);
+        onTextReady(link);        
+      } else {
+        getRemoteText(link, text => {
+          onTextReady(text);
+        });
+      }
     },
 
     selectLink: function() {

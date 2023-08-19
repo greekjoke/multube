@@ -234,11 +234,17 @@ body.cap-position #gctrl i[action="gcRewindRand"]
 .bar .settings > ul > li > i {
   color: black;
 }
+.bar .icon {
+  color: brown;
+}
 .bar .status {
   color: gray;
 }
-.bar .icon {
-  color: brown;
+.bar .status i {
+  margin-left: 5px;
+}
+.bar .status i[value="0"]:before {
+  visibility: hidden;
 }
 .bar .status i[value="ready"]:before {
   content: '\f118'; 
