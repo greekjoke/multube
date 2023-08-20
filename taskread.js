@@ -4,11 +4,11 @@ window.MtTaskRead = function() {
   const app = MtApp;    
   const parent = MtTask();
   const defaultLink = 'http://lib.ru/PROZA/BABEL/rasskazy.txt';
-  const defaultCharset = 'utf-8';
+  const defaultCharset = 'windows-1251';
   const suportCaps = [MtTask.CAPS.PLAYBACK, MtTask.CAPS.SPEED, MtTask.CAPS.POSITION];
 
   const menuCharset = [
-    { id:defaultCharset, title:'UTF-8' },
+    { id:'utf-8', title:'UTF-8' },
     { id:'windows-1251', title:'Windows-1251'},
   ];
 
@@ -144,7 +144,8 @@ window.MtTaskRead = function() {
       parent.init();
 
       this.setStatus('general', 'unready');
-      this.dataReady = false;
+      this.reading = false;
+      this.dataReady = false;      
       this.charset = this.charset || defaultCharset;
       this.updateViewFlags();
       this.switchCharset(this.charset);
@@ -172,6 +173,8 @@ window.MtTaskRead = function() {
     },
 
     onTextReady: function(bin) {    
+      const self = this;
+
       this.binData = bin;
       this.dataReady = true;
       this.setStatus('general', 'ready');            
@@ -179,9 +182,24 @@ window.MtTaskRead = function() {
       const td = new TextDecoder(this.charset);
       const text = td.decode(bin);
 
-      const rd = new MtReading();
+      const rdOptions = {
+        onStatusChanged: function() {
+          if (!this.isPlaying && this.isPaused) {
+            self.setStatus('general', 'paused');
+          } else if (this.isPlaying && !this.isPaused) {
+            self.setStatus('general', 'playing');
+          } else if (!this.isPlaying && !this.isPaused) {
+            self.setStatus('general', 'ready');
+          }
+        },
+        onEnded: function() {          
+          self.setStatus('general', 'ended');
+        },
+      };
+
+      const rd = new MtReading(rdOptions);
       rd.init(text, this.content);
-      this.reading = rd;        
+      this.reading = rd; 
     },
 
     selectLink: function() {
@@ -215,6 +233,43 @@ window.MtTaskRead = function() {
       this.charset = v;
       if (!refresh && this.binData) {
         this.init(this.binData); // reload
+      }
+    },
+
+    play: function() { 
+      if (this.reading && this.isReady) {
+        this.reading.play();
+      }
+    },
+
+    stop: function() { 
+      if (this.reading && this.isReady) {
+        this.reading.stop();
+      }
+    },
+    
+    pause: function() { 
+      if (this.reading && this.isReady) {
+        this.reading.pause();
+      }
+    },
+
+    speed: function(v) { 
+      if (this.reading && this.isReady) {
+        this.reading.speed = v;
+      }
+    },
+
+    duration: function() { 
+      if (this.reading && this.isReady) {
+        return this.reading.count - 1;
+      }
+      return false; 
+    },
+
+    pos: function(v) { 
+      if (this.reading && this.isReady) {
+        this.reading.pos = v;
       }
     },
 

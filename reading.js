@@ -1,23 +1,30 @@
 /* reading library */
 
-window.MtReading = function() {
+window.MtReading = function(opt) {
+  opt = opt || {};
+
+  opt.onStatusChanged = opt.onStatusChanged || function(){};
+  opt.onEnded = opt.onEnded || function(){};
+
+  let uiContainer = false;
   let uiElem = false;
   let instId = false;
   let lexemes = false;
   let position = -1;
   let timer = null;
-  let timerDelay = 400;
+  let timerDelay = 500;
   let isPlay = false;
   let isPaused = false;
+  let speedRatio = 1.0;
 
   const createUI = function(con) {    
     const html = $('#tpl-reading').html();
-    const elem = $(html);      
-    con.addClass('reading-view');
-    con.attr('id', instId = MtUtils.genUid());
+    const elem = $(html);          
+    elem.attr('id', instId = MtUtils.genUid());
     $(con).html('');
     $(con).append(elem);
-    return con;
+    uiContainer = con;
+    return elem;
   };
 
   const parse = function(text) {
@@ -46,7 +53,7 @@ window.MtReading = function() {
     return typeof(x) === 'object' ? x.char : false;
   };
 
-  const getNearestString = function(i) {
+  const getNearestString = function(i, splitForwards) {
     i = typeof(i) !== 'undefined' ? i : position;
     if (i < 0 || i >= lexemes.length) return false;
     const x = lexemes[i];
@@ -61,8 +68,13 @@ window.MtReading = function() {
     } else {
       res.push(x);
       const z = getNextPunctuationMark(i);
-      if (z !== false) {        
-        res.push(z);
+      if (z !== false) {
+        if (splitForwards) {
+          res.pop();
+          res.push(x + z);
+        } else {
+          res.push(z);
+        }
       }
     }
     return res;
@@ -86,7 +98,14 @@ window.MtReading = function() {
   return {
 
     get count() { return lexemes ? lexemes.length : false; },
+    get isPlaying() { return isPlay; },
+    get isPaused() { return isPaused; },
+    
     get pos() { return position; },
+    set pos(v) { this.seek(v); },
+    
+    get speed() { return speedRatio; },
+    set speed(v) { speedRatio = parseFloat(v || 1); },
 
     init: function(text, con) {
       const self = this;
@@ -105,21 +124,39 @@ window.MtReading = function() {
     },
 
     next: function() {      
-      const ar = getNearestString(position + 1);      
+      const ar = getNearestString(position + 1);           
       if (ar) {
         position += ar.length;
         printString(ar);
         updateCounters();
         if (isPlay) {
-          this.play();
+          if (uiContainer.find('#' + instId).length > 0) {
+            this.play();
+          } else {
+            // seems that our view has been removed from the container
+          }
         }
+      } else {        
+        opt.onEnded.call(this);        
       }
     },
 
     prev: function() {      
-      const ar = getNearestString(position - 1);
+      const ar = getNearestString(position - 1, true);      
       if (ar) {        
-        position -= ar.length;
+        position -= ar.length;        
+        printString(ar);
+        updateCounters();
+      }
+    },
+
+    seek: function(v) {
+      v = parseInt(v || 0);
+      if (v < 0) v = 0;
+      if (v >= lexemes.length) v = lexemes.length - 1;
+      position = v;
+      const ar = getNearestString(v);
+      if (ar) {              
         printString(ar);
         updateCounters();
       }
@@ -127,24 +164,42 @@ window.MtReading = function() {
 
     play: function() {
       const self = this;      
+      const old = isPlay;
+      const old2 = isPaused;
       clearTimeout(timer);
       isPlay = true;
       isPaused = false;
+
+      // TODO: speed control / deviations
       timer = setTimeout(() => self.next(), timerDelay);
+
+      if (isPlay !== old || isPaused != old2) {
+        opt.onStatusChanged.call(this);
+      }
     },
 
     pause: function() {
+      const old = isPlay;
+      const old2 = isPaused;
       isPlay = false;
       isPaused = true;
+      if (isPlay !== old || isPaused != old2) {
+        opt.onStatusChanged.call(this);
+      }
     },
 
     stop: function() {
+      const old = isPlay;
+      const old2 = isPaused;
       isPlay = false;
       isPaused = false;
       clearTimeout(timer);
       position = -1;
       printString('---');
       updateCounters();
+      if (isPlay !== old || isPaused != old2) {
+        opt.onStatusChanged.call(this);
+      }
     },
 
   }; // obj
