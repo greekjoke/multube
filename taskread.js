@@ -179,7 +179,9 @@ window.MtTaskRead = function() {
       const td = new TextDecoder(this.charset);
       const text = td.decode(bin);
 
-      this.content.text(text); // test            
+      const rd = new MtReading();
+      rd.init(text, this.content);
+      this.reading = rd;        
     },
 
     selectLink: function() {

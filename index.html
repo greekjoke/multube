@@ -14,6 +14,7 @@
   <!-- <script src="https://cdn.jsdelivr.net/npm/iconv-lite@0.6.3/lib/index.min.js"></script>    -->
   <script src="utils.js"></script>  
   <script src="app.js"></script>  
+  <script src="reading.js"></script>  
   <script src="task.js"></script>
   <script src="taskyt.js"></script>
   <script src="taskaud.js"></script>
@@ -26,6 +27,43 @@
   <link rel="stylesheet" href="style.css">    
   <link rel="icon" type="image/ico" href="favicon.ico"/>  
 </head>
+
+<script type="text/template" id="tpl-task">
+  <div class="task draggable drop-receiver">
+    <div class="bar handle">
+      <span class="icon"><i class="fa-solid fa-flask"></i></span>
+      <span class="title">Untitled</span>
+      <span class="status"></span>
+      <span class="settings menu">
+          <ul>
+            <li>
+              <i class="fa-solid fa-gear"></i>
+              <ul class="submenu"></ul>
+            </li>
+          </ul>          
+      </span>
+      <span class="remove button" action="taskCmd" value="remove">
+        <i class="fa-solid fa-xmark pointer-transparent"></i>          
+      </span>
+    </div>
+    <div class="content-wrap">
+      <div class="content">empty</div>
+    </div>
+  </div> 
+</script>
+
+<script type="text/template" id="tpl-reading">
+  <div class="sidebar-left">0</div>
+  <div class="center">loading</div>
+  <div class="sidebar-right">999</div>
+  <div class="sidebar-bottom">
+    <button class="bnPrev"><i class="fa-solid fa-backward-step"></i></button>
+    <button class="bnStop"><i class="fa-solid fa-stop"></i></button>
+    <button class="bnPlay"><i class="fa-solid fa-play"></i></button>
+    <button class="bnPause"><i class="fa-solid fa-pause"></i></button>    
+    <button class="bnNext"><i class="fa-solid fa-forward-step"></i></button>
+  </div>
+</script>
 
 <body color-scheme="default">
   <header>
@@ -75,9 +113,9 @@
         </li>
         <li><b><a target="_blank" href="https://greekjoke.github.io/multube/readme.md">Help</a></b></li>
       </ul>
-      <!-- /main menu -->
-
     </div>
+    <!-- /main menu -->
+    
     <div id="gctrl">      
       <span class="menu" id="gcMenuSpeed">
         <ul class="inline">
@@ -104,30 +142,6 @@
       <i action="gcRewindRand" title="Rewind to random position" class="button fa-solid fa-shuffle"></i>      
     </div>
   </header>  
-
-  <script type="text/template" id="tpl-task">
-    <div class="task draggable drop-receiver">
-      <div class="bar handle">
-        <span class="icon"><i class="fa-solid fa-flask"></i></span>
-        <span class="title">Untitled</span>
-        <span class="status"></span>
-        <span class="settings menu">
-            <ul>
-              <li>
-                <i class="fa-solid fa-gear"></i>
-                <ul class="submenu"></ul>
-              </li>
-            </ul>          
-        </span>
-        <span class="remove button" action="taskCmd" value="remove">
-          <i class="fa-solid fa-xmark pointer-transparent"></i>          
-        </span>
-      </div>
-      <div class="content-wrap">
-        <div class="content">empty</div>
-      </div>
-    </div> 
-  </script>
 
   <div id="widgets">        
     <div class="placeholder">No any tasks here yet</div>
