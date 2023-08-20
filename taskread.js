@@ -4,22 +4,23 @@ window.MtTaskRead = function() {
   const app = MtApp;    
   const parent = MtTask();
   const defaultLink = 'http://lib.ru/PROZA/BABEL/rasskazy.txt';
+  const defaultCharset = 'utf-8';
   const suportCaps = [MtTask.CAPS.PLAYBACK, MtTask.CAPS.SPEED, MtTask.CAPS.POSITION];
 
-  const isRemoteLink = function(link) {
+  const menuCharset = [
+    { id:defaultCharset, title:'UTF-8' },
+    { id:'windows-1251', title:'Windows-1251'},
+  ];
+
+  const isRemoteLink = function(link) {    
     return link.toLowerCase().indexOf('http') === 0 ||
            link.toLowerCase().indexOf('media/') === 0;
   };
-/*
-  const getRemoteText = function(link, cb) {
-    $.get(link, function(res) {      
-      cb(res);
-    }).fail(function(jqXHR, textStatus, errorThrown) {
-      console.error(link, errorThrown);
-      app.showError('Request failed: ' + link);
-    });
+
+  const isAbv = function(value) {
+    return value && value instanceof ArrayBuffer && value.byteLength !== undefined;
   };
-*/
+  
   const getRemoteText = function(link, cb) {
     const oReq = new XMLHttpRequest();
     oReq.open("GET", link, true);
@@ -37,25 +38,44 @@ window.MtTaskRead = function() {
     get type() { return 'MtTaskRead'; },
     get isReady() { return this.dataReady; },
     get link() { return this.envelope.link; },
+
+    get charset() { return this.envelope.charset; },
+    set charset(v) {
+      if (this.envelope.charset === v) return;
+      this.envelope.charset = v;      
+      app.settingWrite(true);
+    },
         
     menuItems: [
       { id:'load', title:'Load from file' },
       { id:'select', title:'Select internet text' },          
-      { id:'rtext', title:'Reverse text', bool:true },
-      { id:'rword', title:'Reverse word', bool:true },
-      { id:'mhoriz', title:'Mirror horizontal', bool:true },
-      { id:'mvert', title:'Mirror vertical', bool:true },
+      { id:'rtext', title:'Reverse text', bool:true, serializable:true },
+      { id:'rword', title:'Reverse word', bool:true, serializable:true },
+      { id:'mhoriz', title:'Mirror horizontal', bool:true, serializable:true },
+      { id:'mvert', title:'Mirror vertical', bool:true, serializable:true },
+
       /*
-      { id:'enc', title:'Encoding' },
-      { id:'utf8', title:'UTF-8', bool:true },
-      { id:'win1251', title:'windows-1251', bool:true },
-      */
-      { id:'voice', title:'Voice text', bool:true },
-      /*      
+      { id:'voice', title:'Voice text', bool:true },            
       { id:'vtype', title:'Voice type', },
       { id:'vpitch', title:'Voice pitch', },
       */
     ],
+
+    createMenuItems: function(elem) {      
+      const m = parent.createMenuItems.call(this, elem);
+      const sub = $('<ul action="taskCmd" class="has-flags"></ul>');
+      const htmlCheck = '<i class="fa-solid fa-check"></i>';
+
+      menuCharset.forEach(x => {        
+        sub.append(`<li value="${x.id}" flag="0">${htmlCheck}${x.title}</li>`);        
+      });
+      
+      const item = $('<li class="charset"><b>Charset</b></li>');
+      item.append(sub);
+      m.append(item);
+      
+      return m;
+    },
 
     isSupport: function(cap) {      
       return suportCaps.indexOf(cap) != -1;
@@ -74,22 +94,46 @@ window.MtTaskRead = function() {
         case 'load':
           this.loadFromFile();
           break;
+        case 'utf-8':
+        case 'windows-1251':
+          this.switchCharset(code);
+          break;        
         default:
-          parent.command(code, target);
+          if (!this.handleMenuFlags(code)) {
+            parent.command(code, target);
+          }
           break;
       };
+    },
+
+    onMenuFlagChanged: function(id, value) {
+      parent.onMenuFlagChanged(id, value);
+      this.updateViewFlags();
+    },
+
+    updateViewFlags: function() {
+      const self = this;
+      const list = ['rtext', 'rword', 'mhoriz', 'mvert'];
+      list.forEach(x => {
+        const v = !!self.envelope[x];
+        if (v) {
+          self.element.addClass('view-' + x);
+        } else {
+          self.element.removeClass('view-' + x);
+        }
+      });
     },
 
     loadFromFile: function() {      
       const self = this;
       MtUtils.loadFromFile((e, file) => {
         if (e === null) return; // cancel
-        const text = 'raw:' + e.target.result;
+        const bin = e.target.result;
         self.title = file.name;
-        self.switchToLink(text);
+        self.switchToLink(bin);
       }, (e) => {
         console.error(e);
-      }, '.txt');
+      }, {ext:'.txt', asBuffer:true});
     },
 
     init: function(link) {
@@ -101,11 +145,13 @@ window.MtTaskRead = function() {
 
       this.setStatus('general', 'unready');
       this.dataReady = false;
-
+      this.charset = this.charset || defaultCharset;
+      this.updateViewFlags();
+      this.switchCharset(this.charset);
       this.content.html(''); // clear
 
-      link = link || this.envelope.link;            
-      console.log('MtTaskRead.init@2', link ? link.substr(0, 20) : false);
+      link = link || this.link;
+      console.log('MtTaskRead.init@2', link);
       
       if (!link) {
         if (this.title !== 'Untitled') {
@@ -116,35 +162,24 @@ window.MtTaskRead = function() {
         return;
       }
 
-      const onTextReady = function(text) {        
-        self.dataReady = true;
-        self.setStatus('general', 'ready');
-        
-        //let utf8Encode = new TextEncoder();
-        //const buf = utf8Encode.encode(text);
-        
-        console.log('onTextReady', text);
-
-        //let td = new TextDecoder('windows-1251');
-        let td = new TextDecoder('utf-8');
-        text = td.decode(text);
-
-        
-
-
-        // TODO: detect encoding
-        self.content.text(text); // test      
-        
-      };
-
-      if (link.indexOf('raw:') === 0) {
-        link = link.substr(4);
-        onTextReady(link);        
+      if (isAbv(link)) {
+        this.onTextReady(link);
       } else {
-        getRemoteText(link, text => {
-          onTextReady(text);
+        getRemoteText(link, bin => {          
+          self.onTextReady(bin);
         });
       }
+    },
+
+    onTextReady: function(bin) {    
+      this.binData = bin;
+      this.dataReady = true;
+      this.setStatus('general', 'ready');            
+
+      const td = new TextDecoder(this.charset);
+      const text = td.decode(bin);
+
+      this.content.text(text); // test            
     },
 
     selectLink: function() {
@@ -157,8 +192,8 @@ window.MtTaskRead = function() {
     },
 
     switchToLink: function(link) {      
-      if (!link) return false;
-      const save = isRemoteLink(link);
+      if (!link) return false;      
+      const save = !isAbv(link) && isRemoteLink(link);
       if (save) {
         if (this.envelope.link == link) return false;
         this.envelope.link = link;   
@@ -170,6 +205,16 @@ window.MtTaskRead = function() {
       app.settingWrite(true);
       return true;      
     },    
+
+    switchCharset: function(v) {      
+      const refresh = (this.charset === v);
+      const m = this.element.find('.bar .settings .submenu .charset');      
+      app.updateSwithFlags(m, v);
+      this.charset = v;
+      if (!refresh && this.binData) {
+        this.init(this.binData); // reload
+      }
+    },
 
   }; // object
 

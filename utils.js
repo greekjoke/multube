@@ -102,9 +102,15 @@ window.MtUtils = {
     link.remove();
   },
 
-  loadFromFile: function(fnLoaded, fnError, ext) {
+  loadFromFile: function(fnLoaded, fnError, opt) {
     const self = this;
-    const input = document.createElement('input');    
+    const input = document.createElement('input');        
+
+    if (typeof(opt) === 'string') {
+      opt = { ext:opt };
+    } else {
+      opt = opt || { };
+    }
 
     document.body.appendChild(input);
 
@@ -134,11 +140,15 @@ window.MtUtils = {
         cleanHtml();
       }
 
-      reader.readAsText(file);
+      if (opt.asBuffer) {
+        reader.readAsArrayBuffer(file);
+      } else {
+        reader.readAsText(file);
+      }      
     });
 
     input.type = 'file'; 
-    input.accept = ext || '.json';
+    input.accept = opt.ext || '.json';
     input.click();
   },
 

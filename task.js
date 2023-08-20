@@ -71,16 +71,21 @@ window.MtTask = function() {
     },
 
     createMenuItems: function(elem) {
+      const self = this;
       const menuElem = elem.find('.bar .settings .submenu');
       const htmlCheck = '<i class="fa-solid fa-check"></i>';
+
       this.menuItems.forEach(x => {
         if (x.bool) {
-          menuElem.append(`<li action="taskCmd" value="${x.id}" flag="0">${htmlCheck}${x.title}</li>`);
+          const flagValue = (x.serializable ? (self.envelope[x.id]?1:0) : 0);
+          menuElem.append(`<li action="taskCmd" value="${x.id}" flag="${flagValue}">${htmlCheck}${x.title}</li>`);
           menuElem.addClass('has-flags');
         } else {
           menuElem.append(`<li action="taskCmd" value="${x.id}">${x.title}</li>`);
         }
       });
+
+      return menuElem;
     },
 
     createMenuRecent: function(elem) {
@@ -103,6 +108,8 @@ window.MtTask = function() {
       const item = $('<li class="recent"><b>Recent</b></li>');
       item.append(sub);
       m.append(item);
+
+      return sub;
     },
 
     createMenuSamples: function(elem) {
@@ -125,6 +132,8 @@ window.MtTask = function() {
       const item = $('<li class="samples"><b>Samples</b></li>');
       item.append(sub);
       m.append(item);
+
+      return sub;
     },
 
     releaseMenu: function() {
@@ -132,8 +141,8 @@ window.MtTask = function() {
       app.releaseMenu(m);
     },
 
-    setMenuCheck: function(id, flag) {
-      const menuElem = uiElem.find('.bar .settings .submenu');
+    setMenuCheck: function(id, flag, menuElem) {
+      menuElem = menuElem || uiElem.find('.bar .settings .submenu');
       menuElem.find(`li[value="${id}"]`).attr('flag', flag ? '1' : '0');
     },
 
@@ -146,10 +155,30 @@ window.MtTask = function() {
         case 'remove':
           app.removeTask(this.envelope.id);
           break;
-        default:
-          console.error('invalid task command', code, target);
+        default:          
+          if (!this.handleMenuFlags(code)) {            
+            console.error('invalid task command', code, target);
+          }
           break;
       };
+    },
+
+    handleMenuFlags: function(code) {
+      const i = this.menuItems.findIndex(x => x.serializable && x.id == code);
+      if (i !== -1) {
+        const item = this.menuItems[i];
+        const id = item.id;
+        if (!id) return;
+        this.envelope[id] = !this.envelope[id];
+        this.onMenuFlagChanged(id, this.envelope[id]);            
+        return true;
+      }
+      return false;
+    },
+
+    onMenuFlagChanged: function(id, value) {
+      this.setMenuCheck(id, value);
+      app.settingWrite(true);
     },
 
     setStatus: function(statusId, value) {
