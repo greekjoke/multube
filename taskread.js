@@ -7,9 +7,11 @@ window.MtTaskRead = function() {
   const defaultCharset = 'windows-1251';
   const suportCaps = [MtTask.CAPS.PLAYBACK, MtTask.CAPS.SPEED, MtTask.CAPS.POSITION];
 
-  const menuCharset = [
+  const menuCharset = [    
+    { id:'windows-1251', title:'windows-1251'},
     { id:'utf-8', title:'UTF-8' },
-    { id:'windows-1251', title:'Windows-1251'},
+    { id:'iso-8859-5', title:'iso-8859-5'},
+    { id:'x-mac-cyrillic', title:'x-mac-cyrillic'},    
   ];
 
   const isRemoteLink = function(link) {    
@@ -96,6 +98,8 @@ window.MtTaskRead = function() {
           break;
         case 'utf-8':
         case 'windows-1251':
+        case 'iso-8859-5':
+        case 'x-mac-cyrillic':
           this.switchCharset(code);
           break;        
         default:
@@ -108,7 +112,12 @@ window.MtTaskRead = function() {
 
     onMenuFlagChanged: function(id, value) {
       parent.onMenuFlagChanged(id, value);
-      this.updateViewFlags();
+      this.updateViewFlags();      
+      if (this.reading) {
+        const rd = this.reading;        
+        rd.revWord = this.envelope.rword;
+        rd.revText = this.envelope.rtext;
+      }
     },
 
     updateViewFlags: function() {
@@ -198,6 +207,8 @@ window.MtTaskRead = function() {
       };
 
       const rd = new MtReading(rdOptions);
+      rd.revWord = this.envelope.rword;
+      rd.revText = this.envelope.rtext;
       rd.init(text, this.content);
       this.reading = rd; 
     },
@@ -206,8 +217,7 @@ window.MtTaskRead = function() {
       const self = this;      
       const linkDefault = this.envelope.link || defaultLink;
       app.showPrompt('Enter link to txt file', linkDefault, function(link) {
-        self.switchToLink(link);
-        self.addRecent(self.title, self.link);
+        self.switchToLink(link);        
       });
     },
 
@@ -218,6 +228,7 @@ window.MtTaskRead = function() {
         if (this.envelope.link == link) return false;
         this.envelope.link = link;   
         this.title = link.split("/").splice(-1).pop();
+        this.addRecent(this.title, this.link);
       } else {
         this.envelope.link = false;
       }

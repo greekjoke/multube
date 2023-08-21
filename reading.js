@@ -6,11 +6,11 @@ window.MtReading = function(opt) {
   opt.onStatusChanged = opt.onStatusChanged || function(){};
   opt.onEnded = opt.onEnded || function(){};
 
-  const timerDelay = opt.timerDelay || 500;
-  const sentenceEndDelayRatio = 0.7;
-  const wordMaxDelayRatio = 0.8;
-  const wordLenNorm = 5;
-  const wordLenMax = 15;  
+  const timerDelay = opt.timerDelay || 400;
+  const eosDelayRatio = opt.eosDelayRatio || 0.7;
+  const wordMaxDelayRatio = opt.wordMaxDelayRatio || 0.7;
+  const wordLenNorm = opt.wordLenNorm || 5;
+  const wordLenMax = opt.wordLenMax || 15;  
 
   let uiContainer = false;
   let uiElem = false;
@@ -23,6 +23,8 @@ window.MtReading = function(opt) {
   let speedRatio = 1.0;
   let lastWord = false;
   let EOS = false; // reached the end of sentence
+  let revText = false;
+  let revWord = false;
 
   const createUI = function(con) {    
     const html = $('#tpl-reading').html();
@@ -52,18 +54,25 @@ window.MtReading = function(opt) {
     return lexemes;
   };
 
+  const getLexeme = function(i) {
+    if (revText) {
+       i = lexemes.length - i - 1;
+    }
+    return lexemes[i];
+  };
+
   const getNextPunctuationMark = function(i) {
     i = typeof(i) !== 'undefined' ? i : position;
     i++;
     if (i >= lexemes.length) return false;
-    const x = lexemes[i];
+    const x = getLexeme(i);
     return typeof(x) === 'object' ? x.char : false;
   };
 
   const getNearestString = function(i, splitForwards) {
     i = typeof(i) !== 'undefined' ? i : position;
     if (i < 0 || i >= lexemes.length) return false;
-    const x = lexemes[i];
+    const x = getLexeme(i);
     let res = [];    
     EOS = false;
     if (typeof(x) === 'object') {
@@ -92,12 +101,21 @@ window.MtReading = function(opt) {
   };
 
   const printString = function(v) {
+    if (!v) return;
     if (Array.isArray(v)) {
       v = v.join('');
     }
-    const elem = uiElem.find('.center');      
-    elem.text(v);
+    const elem = uiElem.find('.center');
+    if (v.length > 15/*wordLenMax*/) {
+      elem.addClass('long-word');
+    } else {
+      elem.removeClass('long-word');
+    }    
     lastWord = v;
+    if (revWord) {
+      v = MtUtils.reverse(v);
+    }
+    elem.text(v);
   };
 
   const updateCounters = function() {    
@@ -118,7 +136,7 @@ window.MtReading = function(opt) {
     }
     
     if (EOS) {
-      ratio *= sentenceEndDelayRatio;
+      ratio *= eosDelayRatio;
     }
     
     return (1.0 / ratio) * timerDelay;
@@ -135,6 +153,19 @@ window.MtReading = function(opt) {
     
     get speed() { return speedRatio; },
     set speed(v) { speedRatio = parseFloat(v || 1); },
+
+    get revWord() { return revWord; },
+    set revWord(v) { 
+      revWord = !!v; 
+      console.log('lastWord', lastWord);
+      printString(lastWord);
+    },
+    
+    get revText() { return revText; },
+    set revText(v) { 
+      revText = !!v; 
+      printString(lastWord);
+    },
 
     init: function(text, con) {
       const self = this;

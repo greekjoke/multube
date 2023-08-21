@@ -26,6 +26,10 @@ window.MtUtils = {
     return Math.max(min, Math.min(v, max));
   },
 
+  reverse: function(str) {
+    return str.split('').reverse().join('');
+  },
+
   setCookie: function(c_name, value, exmins) {
     const expires = new Date();
     expires.setTime(expires.getTime() + (1000 * 60 * exmins));

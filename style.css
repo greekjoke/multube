@@ -337,3 +337,60 @@ body.cap-position #gctrl i[action="gcRewindRand"]
 .task[data-type='MtTaskRead'] .bar .icon i:before {
   content: "\f031";  
 }
+
+/* Reading library */
+.reading-view {
+  position: relative;
+}
+.reading-view button {
+  padding: 2px 5px;
+}
+.reading-view .sidebar-left,
+.reading-view .sidebar-right
+{
+  display: inline-block;
+  width: 48%;    
+  padding: 0.5rem;
+}
+.reading-view .info {
+  border: 1px solid #ddd;
+  border-left: 0;
+  border-right: 0;
+}
+.reading-view .sidebar-bottom {
+  display: inline-block;  
+  width: 100%;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+.reading-view .center {
+  display: inline-block;  
+  width: 100%;
+  padding: 1rem 0;
+  margin-bottom: 1rem;
+  font-size: 4vw;
+  color: black;
+  overflow: hidden;
+  word-break: break-all;
+}
+.reading-view .center.long-word {
+  font-size: 3vw;
+}
+.task.view-mhoriz .reading-view .center {  
+  -moz-transform: scale(-1, 1);
+  -o-transform: scale(-1, 1);
+  -webkit-transform: scale(-1, 1);
+  transform: scale(-1, 1);
+}
+.task.view-mvert .reading-view .center {
+  -moz-transform: scale(1, -1);
+  -o-transform: scale(1, -1);
+  -webkit-transform: scale(1, -1);  
+  transform: scale(1, -1);
+}
+.task.view-mhoriz.view-mvert .reading-view .center {
+  -moz-transform: scale(-1, -1);
+  -o-transform: scale(-1, -1);
+  -webkit-transform: scale(-1, -1);  
+  transform: scale(-1, -1);
+}
