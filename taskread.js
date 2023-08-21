@@ -45,7 +45,7 @@ window.MtTaskRead = function() {
     set charset(v) {
       if (this.envelope.charset === v) return;
       this.envelope.charset = v;      
-      app.settingWrite(true);
+      app.settingsWrite(true);
     },
         
     menuItems: [
@@ -233,7 +233,7 @@ window.MtTaskRead = function() {
         this.envelope.link = false;
       }
       this.init(link);        
-      app.settingWrite(true);
+      app.settingsWrite(true);
       return true;      
     },    
 

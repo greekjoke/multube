@@ -29,6 +29,7 @@ window.MtApp = {
     if (!MtUtils.hasQueryKey('reset')) {      
       this.settingsRead();
     } else {
+      this.settingsWrite(true);
       console.info('settings loading was ignoreed by query key');
     }
 
@@ -197,7 +198,7 @@ window.MtApp = {
 
     this.updateSwithFlags('#topmenuPresets', value);
     this.updatePreset();
-    this.settingWrite();
+    this.settingsWrite();
   },
 
   switchColors: function(value) {
@@ -211,17 +212,17 @@ window.MtApp = {
     $('body').attr('color-scheme', value);
 
     this.updateSwithFlags('#topmenuColors', value);
-    this.settingWrite();
+    this.settingsWrite();
   },
 
   _deferredSettingsWriteTimer: null,
 
-  settingWrite: function(deferred) {
+  settingsWrite: function(deferred) {
     if (deferred) {
       const self = this;      
       clearTimeout(this._deferredSettingsWriteTimer);            
       _deferredSettingsWriteTimer = setTimeout(function() {        
-        self.settingWrite();
+        self.settingsWrite();
       }, 500);
       return;
     }    
@@ -265,7 +266,7 @@ window.MtApp = {
         }
 
         self.settings = obj;
-        self.settingWrite();  
+        self.settingsWrite();  
 
         document.location.reload();
       }, (e) => {
@@ -284,7 +285,7 @@ window.MtApp = {
       p.tasks = [];     
       self.tlist = {};      
       removed.forEach(x => self.onTaskRemoved(x));
-      self.settingWrite();
+      self.settingsWrite();
     });
   },
 
@@ -306,7 +307,7 @@ window.MtApp = {
     const i = p.tasks.findIndex(x => x.id == t.id);
     p.tasks.splice(i, 1);
     delete this.tlist[t.id];      
-    this.settingWrite();
+    this.settingsWrite();
     this.onTaskRemoved(t);
     if (p.tasks.length == 0) {
       const con = $('#widgets');
@@ -348,7 +349,7 @@ window.MtApp = {
     p.tasks.push(data);
     t.init();
 
-    this.settingWrite();
+    this.settingsWrite();
     this.releaseMenu();     
     this.onTaskAdded(t);
   },
@@ -426,6 +427,9 @@ window.MtApp = {
   },
 
   getRecent: function(type) {    
+    if (!this.settings.recent) {
+      this.settings.recent = {};
+    }
     return this.settings.recent[type] || [];
   },
 
@@ -452,7 +456,7 @@ window.MtApp = {
     console.log('addRecent@5', item, r);
 
     this.settings.recent[type] = r;
-    this.settingWrite(true);
+    this.settingsWrite(true);
 
     for(const i in this.tlist) {
       const t = this.tlist[i];
@@ -503,7 +507,7 @@ window.MtApp = {
             target.insertBefore(recv);            
           }
 
-          self.settingWrite(true);
+          self.settingsWrite(true);
       }
     });
   },

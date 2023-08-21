@@ -27,7 +27,7 @@ window.MtTask = function() {
     set title(v) { 
       dataEnv.title = v; 
       uiElem.find('.bar .title').text(v);
-      app.settingWrite(true);
+      app.settingsWrite(true);
     },
 
     get isReady() { return true; },
@@ -178,7 +178,7 @@ window.MtTask = function() {
 
     onMenuFlagChanged: function(id, value) {
       this.setMenuCheck(id, value);
-      app.settingWrite(true);
+      app.settingsWrite(true);
     },
 
     setStatus: function(statusId, value) {

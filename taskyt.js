@@ -56,8 +56,8 @@ window.MtTaskYt = function() {
       const res = linkParser(link);
       if (!res) return;
 
-      const dom = $('<div class="content"></div>')[0];      
-      const wr = this.content.closest('.content-wrap');
+      const dom = $('<div class="content"></div>')[0];
+      const wr = this.content.closest('.content-wrap');      
       wr.html('');
       wr.append($(dom));      
 
@@ -107,7 +107,7 @@ window.MtTaskYt = function() {
       if (this.envelope.link == link) return false;
       this.envelope.link = link;        
       this.init();        
-      app.settingWrite(true);
+      app.settingsWrite(true);
       return true;
     },
 

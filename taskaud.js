@@ -48,7 +48,7 @@ window.MtTaskAudio = function() {
       if (this.stereoNode)
         this.stereoNode.pan.value = v;
       this.updateBalanceMenu();      
-      app.settingWrite(true);
+      app.settingsWrite(true);
     },
 
     isSupport: function(cap) {      
@@ -219,7 +219,7 @@ window.MtTaskAudio = function() {
         this.envelope.link = false;
       }
       this.init(link);        
-      app.settingWrite(true);
+      app.settingsWrite(true);
       return true;
     },    
 

@@ -156,8 +156,7 @@ window.MtReading = function(opt) {
 
     get revWord() { return revWord; },
     set revWord(v) { 
-      revWord = !!v; 
-      console.log('lastWord', lastWord);
+      revWord = !!v;       
       printString(lastWord);
     },
     

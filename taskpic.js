@@ -106,8 +106,7 @@ window.MtTaskPic = function() {
       const self = this;      
       const linkDefault = this.envelope.link || defaultImageLink;
       app.showPrompt('Enter image link (jpg, png, etc.)', linkDefault, function(link) {
-        self.switchToLink(link);
-        self.addRecent(self.title, self.link);
+        self.switchToLink(link);        
       });
     },
 
@@ -118,11 +117,12 @@ window.MtTaskPic = function() {
         if (this.envelope.link == link) return false;
         this.envelope.link = link;   
         this.title = link.split("/").splice(-1).pop();
+        this.addRecent(this.title, this.link);
       } else {
         this.envelope.link = false;
       }
       this.init(link);        
-      app.settingWrite(true);
+      app.settingsWrite(true);
       return true;      
     },    
 

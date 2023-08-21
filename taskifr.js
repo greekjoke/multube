@@ -85,7 +85,7 @@ window.MtTaskFrame = function() {
       //this.title = link.split("/").splice(-1).pop();
 
       this.init(link);
-      app.settingWrite(true);
+      app.settingsWrite(true);
       return true;      
     },    
 
