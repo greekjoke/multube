@@ -22,6 +22,10 @@ window.MtUtils = {
       document.location.href.indexOf('&' + key + '=') != -1;
   },
 
+  clamp: function(v, min, max) {
+    return Math.max(min, Math.min(v, max));
+  },
+
   setCookie: function(c_name, value, exmins) {
     const expires = new Date();
     expires.setTime(expires.getTime() + (1000 * 60 * exmins));

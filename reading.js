@@ -6,16 +6,23 @@ window.MtReading = function(opt) {
   opt.onStatusChanged = opt.onStatusChanged || function(){};
   opt.onEnded = opt.onEnded || function(){};
 
+  const timerDelay = opt.timerDelay || 500;
+  const sentenceEndDelayRatio = 0.7;
+  const wordMaxDelayRatio = 0.8;
+  const wordLenNorm = 5;
+  const wordLenMax = 15;  
+
   let uiContainer = false;
   let uiElem = false;
   let instId = false;
   let lexemes = false;
   let position = -1;
-  let timer = null;
-  let timerDelay = 500;
+  let timer = null;  
   let isPlay = false;
   let isPaused = false;
   let speedRatio = 1.0;
+  let lastWord = false;
+  let EOS = false; // reached the end of sentence
 
   const createUI = function(con) {    
     const html = $('#tpl-reading').html();
@@ -28,7 +35,7 @@ window.MtReading = function(opt) {
   };
 
   const parse = function(text) {
-    const lexemes = [];
+    const lexemes = [];    
     text = text.replaceAll(/\n\r/gi, ' ');
     text.split(' ').forEach(x => {
       x = x.trim();
@@ -58,10 +65,11 @@ window.MtReading = function(opt) {
     if (i < 0 || i >= lexemes.length) return false;
     const x = lexemes[i];
     let res = [];    
+    EOS = false;
     if (typeof(x) === 'object') {
       const a = getNearestString(i-1);
       if (a !== false) {                
-        res = res.concat(a);
+        res = res.concat(a);        
       } else {
         res.push(x.char);
       }
@@ -75,6 +83,9 @@ window.MtReading = function(opt) {
         } else {
           res.push(z);
         }
+        if (['.', '!', '?'].indexOf(z) !== -1) {
+          EOS = true;
+        }
       }
     }
     return res;
@@ -86,6 +97,7 @@ window.MtReading = function(opt) {
     }
     const elem = uiElem.find('.center');      
     elem.text(v);
+    lastWord = v;
   };
 
   const updateCounters = function() {    
@@ -93,6 +105,23 @@ window.MtReading = function(opt) {
     const left = lexemes.length - position;
     uiElem.find('.sidebar-left').text(passed);
     uiElem.find('.sidebar-right').text(left);
+  };
+
+  const calcDelay = function() {    
+    let ratio = speedRatio;
+
+    if (lastWord !== false) {
+      const n = MtUtils.clamp(lastWord.length, wordLenNorm, wordLenMax) - wordLenNorm;                
+      const f = 1.0 * n / (wordLenMax - wordLenNorm);
+      const x = 1.0 - f * (1.0 - wordMaxDelayRatio);
+      ratio *= x;
+    }
+    
+    if (EOS) {
+      ratio *= sentenceEndDelayRatio;
+    }
+    
+    return (1.0 / ratio) * timerDelay;
   };
 
   return {
@@ -170,8 +199,9 @@ window.MtReading = function(opt) {
       isPlay = true;
       isPaused = false;
 
-      // TODO: speed control / deviations
-      timer = setTimeout(() => self.next(), timerDelay);
+      const delay = calcDelay();
+      //console.log('delay', delay, lastWord, EOS);
+      timer = setTimeout(() => self.next(), delay);
 
       if (isPlay !== old || isPaused != old2) {
         opt.onStatusChanged.call(this);
