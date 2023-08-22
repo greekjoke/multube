@@ -97,22 +97,6 @@ body.cap-position #gctrl i[action="gcRewindRand"]
   opacity: 1;
 }
 
-/* widgets */
-#widgets {
-  color: gray;
-  text-align: center;
-  border-width: 4px;
-  border-style: groove;
-  border-color: #aaa;
-  background-color: #eef;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 40px;
-  bottom: 0;  
-  overflow: hidden;  
-}
-
 /* general menu styles */
 .menu ul {
   font-size: 1.0rem;
@@ -177,6 +161,18 @@ body.cap-position #gctrl i[action="gcRewindRand"]
 
 /* widgets */
 #widgets {
+  color: gray;
+  text-align: center;
+  border-width: 4px;
+  border-style: groove;
+  border-color: #aaa;
+  background-color: #eef;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 40px;
+  bottom: 0;  
+  overflow: hidden;  
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
@@ -414,6 +410,22 @@ body.cap-position #gctrl i[action="gcRewindRand"]
   -o-transform: scale(-1, -1);
   -webkit-transform: scale(-1, -1);  
   transform: scale(-1, -1);
+}
+
+/* vertical orientation */
+@media (max-aspect-ratio: 1/1) {
+  #title {
+    display: none;
+  }
+  #widgets {    
+    flex-direction: column;  
+  }
+  .task {    
+    min-width: 96vw; /* defines a layout type */
+    min-height: 12%; /* define max num rows */
+    max-width: 99%;
+    max-height: 99%;    
+  }
 }
 
 /* color scheme "Dark" */
