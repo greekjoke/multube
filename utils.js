@@ -26,6 +26,10 @@ window.MtUtils = {
     return Math.max(min, Math.min(v, max));
   },
 
+  clone: function(obj) {
+    return JSON.parse(JSON.stringify(obj));
+  },
+
   reverse: function(str) {
     return str.split('').reverse().join('');
   },

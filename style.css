@@ -196,19 +196,20 @@ body.cap-position #gctrl i[action="gcRewindRand"]
 .task {
   border: 1px solid gray;
   background-color: white;
-  margin: 0.5rem;
-  min-width: 30%;
-  min-height: 18%;
-  max-width: 50%;
-  max-height: 50%;
+  margin: 0.2rem;
+  min-width: 30%; /* defines a layout type */
+  min-height: 30vh; /* define max num rows */
+  max-width: 99%;
+  max-height: 99%;
   flex-grow: 1;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 .bar {
   display: flex;
   flex-wrap: nowrap;
   flex-direction: row;
   align-items: stretch;
+  justify-content: end;
   padding: 2px 5px;
   background-color: #ded;      
   border-bottom: 1px solid gray;
@@ -222,8 +223,9 @@ body.cap-position #gctrl i[action="gcRewindRand"]
   white-space: nowrap;
   display: inline-block;
   padding: 0 5px;
-  flex: auto;
-  width: 50px;
+  position: absolute;
+  left: 1.5rem;
+  right: 5rem;
 }
 .bar .status,
 .bar .settings,
@@ -239,6 +241,7 @@ body.cap-position #gctrl i[action="gcRewindRand"]
 }
 .bar .icon {
   color: brown;
+  flex: 1;
 }
 .bar .status {
   color: gray;
@@ -265,7 +268,7 @@ body.cap-position #gctrl i[action="gcRewindRand"]
   position: relative;
   overflow: hidden;
   width: 100%;
-  height: 94%;
+  height: 90%;
   margin-top: 2px;
 }
 .task .content {
@@ -283,6 +286,7 @@ body.cap-position #gctrl i[action="gcRewindRand"]
 .task[data-type='MtTaskYt'] .bar .icon i:before {
   content: "\f03d";  
 }
+/*
 .task[data-type='MtTaskYt'] .content-wrap {
   position: relative;
   width: 100%;
@@ -297,6 +301,7 @@ body.cap-position #gctrl i[action="gcRewindRand"]
   width: 100%;
   height: 100%;
 }
+*/
 
 /* audio */
 .task[data-type='MtTaskAudio'] .bar {
@@ -409,4 +414,33 @@ body.cap-position #gctrl i[action="gcRewindRand"]
   -o-transform: scale(-1, -1);
   -webkit-transform: scale(-1, -1);  
   transform: scale(-1, -1);
+}
+
+/* color scheme "Dark" */
+body[color-scheme="dark"] a {
+  color: lightsalmon;
+}
+body[color-scheme="dark"] header {  
+  background-color: #444;
+}
+body[color-scheme="dark"] .menu ul {  
+  color: #bbb;
+}
+body[color-scheme="dark"] .menu ul ul {  
+  background-color: #444;
+}
+body[color-scheme="dark"] .menu ul ul li:hover {
+  background-color: #753;
+}
+body[color-scheme="dark"] .menu li b {  
+  color: lightsteelblue;
+}
+body[color-scheme="dark"] #gctrl i {  
+  color: lightseagreen;
+}
+body[color-scheme="dark"] #widgets {  
+  background-color: darkslategrey;
+}
+body[color-scheme="dark"] .task {  
+  background-color: silver;
 }

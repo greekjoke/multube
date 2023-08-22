@@ -105,7 +105,7 @@ window.MtTaskPic = function() {
     selectImage: function() {
       const self = this;      
       const linkDefault = this.envelope.link || defaultImageLink;
-      app.showPrompt('Enter image link (jpg, png, etc.)', linkDefault, function(link) {
+      app.showPrompt('Enter internet image link (like http:// ... jpg, png, etc.)', linkDefault, function(link) {
         self.switchToLink(link);        
       });
     },

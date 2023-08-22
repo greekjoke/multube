@@ -37,6 +37,8 @@ window.MtApp = {
     this.updateSwithFlags('#topmenuColors', this.settings.curScheme);
     this.updatePreset();
 
+    $('body').attr('color-scheme', this.settings.curScheme || 'default');
+
     this.ready = true;
   },
 
@@ -159,6 +161,30 @@ window.MtApp = {
       self.updateMenuPresets();
       self.switchPreset(id);
     });    
+  },
+
+  savePresetAs: function() {
+    const self = this;
+    const p = this.getPreset();
+
+    this.showPrompt('Enter name for new preset', '', str => {      
+      str = str.trim().substring(0, 32);      
+      
+      if (str.length < 1)
+        return self.showError('Empty name is not allowed');      
+      
+      if (self.getPresetByName(str))
+        return self.showError('Preset with this name is already in use');
+
+      const newPreset = MtUtils.clone(p);
+      
+      newPreset.id = MtUtils.genUid();
+      newPreset.name = str;
+      
+      self.settings.presets.push(newPreset);
+      self.updateMenuPresets();
+      self.switchPreset(newPreset.id);
+    });
   },
 
   removePreset: function() {
