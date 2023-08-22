@@ -417,14 +417,21 @@ body.cap-position #gctrl i[action="gcRewindRand"]
   #title {
     display: none;
   }
+  header {
+    min-height: 64px;
+  }
   #widgets {    
-    flex-direction: column;  
+    flex-direction: column; 
+    top: 64px; 
   }
   .task {    
     min-width: 96vw; /* defines a layout type */
     min-height: 12%; /* define max num rows */
     max-width: 99%;
     max-height: 99%;    
+  }
+  #gctrl i {
+    font-size: 1.2rem;
   }
 }
 
