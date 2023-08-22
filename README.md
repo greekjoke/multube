@@ -20,7 +20,7 @@
 
 - демонстрационное видео [здесь](https://www.youtube.com/watch?v=SZJx5nXTsdo)
 - добавление задач, множество Youtube плееров: [смотреть](https://www.youtube.com/watch?v=SZJx5nXTsdo)
-- сохранения настроенных задач в виде пресета: [смотреть](https://youtu.be/SZJx5nXTsdo?t=108)
+- сохранение настроенных задач в виде пресета: [смотреть](https://youtu.be/SZJx5nXTsdo?t=108)
 - настройка проигрывания двух аудио через разные каналы (левый/правый): [смотреть](https://youtu.be/SZJx5nXTsdo?t=129)
 - настройка и возможности "читалки": [смотреть](https://youtu.be/SZJx5nXTsdo?t=192)
 - добавление задач с картинками: [смотреть](https://youtu.be/SZJx5nXTsdo?t=266)
@@ -28,4 +28,4 @@
 - множество разнотипных задач: [смотреть](https://youtu.be/SZJx5nXTsdo?t=358)
 - перетаскивание/ручная сортировка задач: [смотреть](https://youtu.be/SZJx5nXTsdo?t=404)
 - цветовые схемы: [смотреть](https://youtu.be/SZJx5nXTsdo?t=429)
-- экспорти/импорт настроек: [смотреть](https://youtu.be/SZJx5nXTsdo?t=434)
+- экспорт/импорт настроек: [смотреть](https://youtu.be/SZJx5nXTsdo?t=434)
