@@ -39,7 +39,7 @@ window.MtTaskAudio = function() {
       { id:'right', title:'Right ear', bool:true },
     ],
 
-    get balance() { return this.envelope.balance; },
+    get balance() { return this.envelope.balance || 0; },
     set balance(v) { 
       v = parseInt(v);
       if (this.envelope.balance === v)
@@ -79,7 +79,7 @@ window.MtTaskAudio = function() {
     },
 
     toggleLeft: function() {
-      const v = this.balance;      
+      const v = this.balance;
       if (v < 1) {
         this.balance = 1; // only right
       } else {
