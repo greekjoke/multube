@@ -1,46 +1,31 @@
-
-<!--
-  TODO:
-  - different task types: video (youtube), audio, text, picture, iframe.
-  - tasks preset can be saved/loaded by special name
-  - common flow control elements
-  - task flow control elements
-  - video task can save user links to use in future (recent items)
-  - video task: links library 
-  - audio task can load user files to playback (mp3, ogg, wav)
-  - audio task: links library 
-  - audio task: save/restore last position
-  - text task can pronounce text if browser supports it
-  - text task: links library 
-  - text task: compress text and try to save/load in storage
-  - text task: save/restore last position
-  - text task: reverse playback
-  - text task: reverse word
-  - text task: mirror word horizontaly/vertical
-  - serialize/deserialize tasks state and global settings
-  - export/import from presets file
-  - ui: user can change tasks order  
-  - ui: color schemes
-  - ui: support mobile devices
-  - ui: russian language
--->
-
 # MulTube
 
 Приложение для тренировки восприятия информации. Доступно по [ссылке](https://greekjoke.github.io/multube/)
+
+Приложение разрабатывалось и тестировалось для ПК в браузере Google Chrome, по этом рекомендуется работать через него.
+
+Загружаемые с компьютера файлы не скохраняются при следующем открытии и доступны только до закрытия страницы.
 
 ## Возможности
 
 - проигрывание нескольких аудио через разные каналы (левый/праввый).
 - синхронное управление множеством Youtube плееров.
-- компактная "читалка" текстов.
 - синхронное управление скоростью проигрывания.
 - случайное позиционирование плееров.
+- компактная "читалка" текстов.
 - отображение сторонних сайтов.
+- экспорт/импорт настроек через файл.
 
 ## Примеры
 
-...
-
-
-
+- демонстрационное видео [здесь](https://www.youtube.com/watch?v=SZJx5nXTsdo)
+- добавление задач, множество Youtube плееров: [смотреть](https://www.youtube.com/watch?v=SZJx5nXTsdo)
+- сохранения настроенных задач в виде пресета: [смотреть](https://youtu.be/SZJx5nXTsdo?t=108)
+- настройка проигрывания двух аудио через разные каналы (левый/правый): [смотреть](https://youtu.be/SZJx5nXTsdo?t=129)
+- настройка и возможности "читалки": [смотреть](https://youtu.be/SZJx5nXTsdo?t=192)
+- добавление задач с картинками: [смотреть](https://youtu.be/SZJx5nXTsdo?t=266)
+- добавление прочих сайтов на экран: [смотреть](https://youtu.be/SZJx5nXTsdo?t=310)
+- множество разнотипных задач: [смотреть](https://youtu.be/SZJx5nXTsdo?t=358)
+- перетаскивание/ручная сортировка задач: [смотреть](https://youtu.be/SZJx5nXTsdo?t=404)
+- цветовые схемы: [смотреть](https://youtu.be/SZJx5nXTsdo?t=429)
+- экспорти/импорт настроек: [смотреть](https://youtu.be/SZJx5nXTsdo?t=434)

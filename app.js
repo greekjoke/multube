@@ -479,7 +479,7 @@ window.MtApp = {
       r.splice(this.maxRecentItems); // remove last one    
     }
 
-    console.log('addRecent@5', item, r);
+    //console.log('addRecent@5', item, r);
 
     this.settings.recent[type] = r;
     this.settingsWrite(true);
