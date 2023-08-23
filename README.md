@@ -31,3 +31,8 @@
 - перетаскивание/ручная сортировка задач: [смотреть](https://youtu.be/SZJx5nXTsdo?t=404)
 - цветовые схемы: [смотреть](https://youtu.be/SZJx5nXTsdo?t=429)
 - экспорт/импорт настроек: [смотреть](https://youtu.be/SZJx5nXTsdo?t=434)
+
+<!-- TODO:
+- voice text (typep, pitch)
+- reading: compress short text file and store it in the local storage
+ -->

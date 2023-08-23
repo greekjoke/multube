@@ -130,6 +130,17 @@ window.MtApp = {
     }
 
     this.updateGlobalCaps();
+    this.updateDocTitle();
+  },
+
+  updateDocTitle: function() {
+    const p = this.getPreset();    
+    if (p.id === 'default') {
+      document.title = 'MulTube';
+    } else {
+      const s = MtUtils.ellipsis(p.name, 15);
+      document.title = s + ' :: MulTube';
+    }
   },
 
   updateSwithFlags: function(con, value) {

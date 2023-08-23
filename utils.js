@@ -30,6 +30,33 @@ window.MtUtils = {
     return JSON.parse(JSON.stringify(obj));
   },
 
+  ellipsis: function(text, limit = 20, type = 0) {
+    text = text || '';
+    limit = Math.max(3, parseInt(limit || 20));
+    type = parseInt(type || 0) % 3; // [0,2]
+    
+    const n = text.length;
+    const x = n - limit;
+    if (n <= limit) return text;
+
+    switch(type) {
+      case 0: // cut the end
+        text = text.substr(0, limit-3) + '...';
+        break;
+      case 1: // cut the beggin
+        text = '...' + text.substr(x+3);
+        break;
+      case 2: // cut in the middle
+        const half = Math.floor(limit/2);
+        const a = text.substr(0, half);
+        const b = text.substr(n - half + 3);
+        text = a + '...' + b;
+        break;
+    }
+
+    return text;
+  },
+
   reverse: function(str) {
     return str.split('').reverse().join('');
   },
