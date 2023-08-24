@@ -10,7 +10,7 @@
 
 ## Возможности
 
-- проигрывание нескольких аудио через разные каналы (левый/праввый).
+- проигрывание нескольких аудио через разные каналы (левый/правый).
 - синхронное управление множеством Youtube плееров.
 - синхронное управление скоростью проигрывания.
 - случайное позиционирование плееров.
@@ -33,6 +33,9 @@
 - экспорт/импорт настроек: [смотреть](https://youtu.be/SZJx5nXTsdo?t=434)
 
 <!-- TODO:
-- voice text (typep, pitch)
+- voice text (type, pitch, volume)
+- voice: left/right channels
 - reading: compress short text file and store it in the local storage
+- reading: position slider
+- audio/yt player: save/restore volume
  -->

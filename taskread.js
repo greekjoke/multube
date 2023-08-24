@@ -55,15 +55,13 @@ window.MtTaskRead = function() {
       { id:'rword', title:'Reverse word', bool:true, serializable:true },
       { id:'mhoriz', title:'Mirror horizontal', bool:true, serializable:true },
       { id:'mvert', title:'Mirror vertical', bool:true, serializable:true },
-
-      /*
-      { id:'voice', title:'Voice text', bool:true },            
-      { id:'vtype', title:'Voice type', },
-      { id:'vpitch', title:'Voice pitch', },
-      */
+      { id:'speak', title:'Speak text', bool:true, serializable:true },
     ],
 
-    createMenuItems: function(elem) {      
+    createMenuItems: function(elem) { 
+      
+      this.envelope.speak = false; // always off at start
+      
       const m = parent.createMenuItems.call(this, elem);
       const sub = $('<ul action="taskCmd" class="has-flags"></ul>');
       const htmlCheck = '<i class="fa-solid fa-check"></i>';
@@ -75,8 +73,34 @@ window.MtTaskRead = function() {
       const item = $('<li class="charset"><b>Charset</b></li>');
       item.append(sub);
       m.append(item);
-      
+
       return m;
+    },
+
+    createMenuVoices: function(elem) {
+      elem = elem || this.element;
+
+      const htmlCheck = '<i class="fa-solid fa-check"></i>';
+      const m = elem.find('.bar .settings .submenu');
+      const list = this.speaker.voices || [];
+
+      m.find('li.voices').remove(); // remove old menu
+
+      if (list.length < 1 || !this.envelope.speak)
+        return;
+
+      const sub = $('<ul action="taskCmd" class="has-flags"></ul>');
+
+      list.forEach((x, i) => {                
+        sub.append(`<li value="voice:${i}" flag="0" title="${x.name}">${htmlCheck}${x.name}</li>`);
+      });
+      
+      const item = $('<li class="voices"><b>Voices</b></li>');
+      item.append(sub);
+      //m.append(item);
+      item.insertAfter(m.find('li[value="speak"]'));
+
+      return sub;
     },
 
     isSupport: function(cap) {      
@@ -88,7 +112,12 @@ window.MtTaskRead = function() {
         this.switchToLink(code);
         this.releaseMenu();
         return;
-      }      
+      }    
+      if (code.indexOf('voice:') === 0) {
+        code = code.substr('voice:'.length);
+        this.switchVoice(code);
+        return;
+      }  
       switch(code) {
         case 'select':
           this.selectLink();
@@ -112,11 +141,22 @@ window.MtTaskRead = function() {
 
     onMenuFlagChanged: function(id, value) {
       parent.onMenuFlagChanged(id, value);
-      this.updateViewFlags();      
-      if (this.reading) {
-        const rd = this.reading;        
-        rd.revWord = this.envelope.rword;
-        rd.revText = this.envelope.rtext;
+
+      if (id == 'speak') {        
+        if (this.envelope.speak && this.speaker) {
+          this.speaker.init();
+          this.createMenuVoices();
+          this.switchVoice(this.envelope.voice);
+        } else if (!this.envelope.speak) {
+          this.createMenuVoices();
+        }
+      } else {
+        this.updateViewFlags();      
+        if (this.reading) {
+          const rd = this.reading;
+          rd.revWord = this.envelope.rword;
+          rd.revText = this.envelope.rtext;
+        }
       }
     },
 
@@ -155,9 +195,9 @@ window.MtTaskRead = function() {
       this.setStatus('general', 'unready');
       this.reading = false;
       this.dataReady = false;      
-      this.charset = this.charset || defaultCharset;
+      this.charset = this.charset || defaultCharset;      
       this.updateViewFlags();
-      this.switchCharset(this.charset);
+      this.switchCharset(this.charset);      
       this.content.html(''); // clear
 
       link = link || this.link;
@@ -171,6 +211,8 @@ window.MtTaskRead = function() {
         }
         return;
       }
+
+      this.speaker = MtAudio.Speaker();      
 
       if (isAbv(link)) {
         this.onTextReady(link);
@@ -245,6 +287,32 @@ window.MtTaskRead = function() {
       if (!refresh && this.binData) {
         this.init(this.binData); // reload
       }
+    },
+
+    testVoice: function() {      
+      const testText = this.content.find('.center').text();
+      if (testText && this.speaker) {
+        // test speaking with current word
+        console.log('cur voice', this.speaker.curVoice);
+        this.speaker.speak(testText);
+      }
+    },
+
+    switchVoice: function(v) {
+      v = parseInt(v || 0);
+      //if (this.envelope.voice === v) return;
+      if (this.speaker) {
+        const list = this.speaker.voices || [];
+        if (v < 0 || v >= list.length) v = 0;
+        this.envelope.voice = v;
+        this.speaker.curVoice = v;
+        this.testVoice();
+      } else {
+        this.envelope.voice = false;
+      }      
+      const m = this.element.find('.bar .settings .submenu .voices');      
+      app.updateSwithFlags(m, 'voice:'+v);
+      app.settingsWrite(true);
     },
 
     play: function() { 

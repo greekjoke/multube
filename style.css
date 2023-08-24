@@ -412,6 +412,11 @@ body.cap-position #gctrl i[action="gcRewindRand"]
   transform: scale(-1, -1);
 }
 
+/* voices */
+.menu li.voices ul {
+  width: 320px;
+}
+
 /* vertical orientation */
 @media (max-aspect-ratio: 1/1) {
   #title {
