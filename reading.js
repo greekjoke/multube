@@ -5,6 +5,8 @@ window.MtReading = function(opt) {
 
   opt.onStatusChanged = opt.onStatusChanged || function(){};
   opt.onEnded = opt.onEnded || function(){};
+  opt.onEOS = opt.onEOS || function(){};
+  opt.onNext = opt.onNext || function(){};
 
   const timerDelay = opt.timerDelay || 400;
   const eosDelayRatio = opt.eosDelayRatio || 0.7;
@@ -22,9 +24,10 @@ window.MtReading = function(opt) {
   let isPaused = false;
   let speedRatio = 1.0;
   let lastWord = false;
-  let EOS = false; // reached the end of sentence
+  let EOS = false; // reached the end of the sentence
   let revText = false;
   let revWord = false;
+  let pauseAtEOS = opt.pauseAtEOS || false;
 
   const createUI = function(con) {    
     const html = $('#tpl-reading').html();
@@ -38,7 +41,7 @@ window.MtReading = function(opt) {
 
   const parse = function(text) {
     const lexemes = [];    
-    text = text.replaceAll(/\n\r/gi, ' ');
+    text = text.replaceAll(/[\n\r]+/gi, ' ');    
     text.split(' ').forEach(x => {
       x = x.trim();
       if (x.length < 1) return;
@@ -69,6 +72,10 @@ window.MtReading = function(opt) {
     return typeof(x) === 'object' ? x.char : false;
   };
 
+  const isEndChar = function(c) {
+    return ['.', '!', '?'].indexOf(c) !== -1;
+  };
+
   const getNearestString = function(i, splitForwards) {
     i = typeof(i) !== 'undefined' ? i : position;
     if (i < 0 || i >= lexemes.length) return false;
@@ -92,12 +99,29 @@ window.MtReading = function(opt) {
         } else {
           res.push(z);
         }
-        if (['.', '!', '?'].indexOf(z) !== -1) {
+        if (isEndChar(z)) {
           EOS = true;
         }
       }
     }
     return res;
+  };
+
+  const getNearestSentence = function(i) {
+    i = typeof(i) !== 'undefined' ? i : position;
+    if (i < 0 || i >= lexemes.length) return false;
+    const list = [];
+    let c = '';    
+    while (!isEndChar(c)) {
+      const x = getLexeme(i);
+      if (typeof(x) === 'object') {
+        list.push(c = x.char);
+      } else {
+        list.push(c = x);
+      }
+      i++;
+    }
+    return list.join(' ');
   };
 
   const printString = function(v) {
@@ -166,14 +190,20 @@ window.MtReading = function(opt) {
       printString(lastWord);
     },
 
+    get pauseAtEOS() { return pauseAtEOS; },
+    set pauseAtEOS(v) { pauseAtEOS = !!v; },
+
+    getSentence: function(pos) {
+      return getNearestSentence(pos);
+    },
+
     init: function(text, con) {
       const self = this;
 
       uiElem = createUI(con);
       lexemes = parse(text);
-      position = -1;
-      
-      this.next();
+
+      this.stop();
 
       uiElem.find('.bnPrev').click(() => self.prev());
       uiElem.find('.bnNext').click(() => self.next());
@@ -183,18 +213,27 @@ window.MtReading = function(opt) {
     },
 
     next: function() {      
+      const oldEOS = EOS;
+      const oldPos = position;
       const ar = getNearestString(position + 1);           
-      if (ar) {
-        position += ar.length;
+      if (ar) {        
+        position += ar.length;        
         printString(ar);
         updateCounters();
         if (isPlay) {
-          if (uiContainer.find('#' + instId).length > 0) {
-            this.play();
+          if (uiContainer.find('#' + instId).length === 0)
+            return; // seems that our view has been removed from the container
+          if (pauseAtEOS && EOS) {
+            this.pause();
           } else {
-            // seems that our view has been removed from the container
-          }
-        }
+            this.play();
+          }          
+          if (oldEOS) {
+            opt.onNext.call(this, oldPos + 1, position);
+          } else if (EOS) {
+            opt.onEOS.call(this, position);
+          }        
+        }        
       } else {        
         opt.onEnded.call(this);        
       }
@@ -225,12 +264,12 @@ window.MtReading = function(opt) {
       const self = this;      
       const old = isPlay;
       const old2 = isPaused;
+      
       clearTimeout(timer);
       isPlay = true;
       isPaused = false;
 
-      const delay = calcDelay();
-      //console.log('delay', delay, lastWord, EOS);
+      const delay = calcDelay();      
       timer = setTimeout(() => self.next(), delay);
 
       if (isPlay !== old || isPaused != old2) {
@@ -251,9 +290,10 @@ window.MtReading = function(opt) {
     stop: function() {
       const old = isPlay;
       const old2 = isPaused;
+      clearTimeout(timer);
       isPlay = false;
       isPaused = false;
-      clearTimeout(timer);
+      EOS = true;      
       position = -1;
       printString('---');
       updateCounters();

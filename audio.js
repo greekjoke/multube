@@ -33,6 +33,9 @@ window.MtAudio = {
   Speaker: function(opt) {
     opt = opt || {};
 
+    opt.onSpeakStart = opt.onSpeakStart || function(){};
+    opt.onSpeakEnd = opt.onSpeakEnd || function(){};
+
     MtAudio.speakingInit();
 
     let SSU = null;
@@ -40,20 +43,40 @@ window.MtAudio = {
     return {
 
       get isPresent() { return !!MtAudio.synth; },
-      get voices() { return MtAudio.voices; },
+      get isSpeaking() { return MtAudio.synth.speaking; },
+      get voices() { return MtAudio.voices; },      
       curVoice: 0,
       volume: 1.0,
       rate: 1.0,
       pitch: 1.0,
 
       init: function() {
-        SSU = SSU || new SpeechSynthesisUtterance();       
-        voices = MtAudio.loadVoices();
+        const self = this;
+        MtAudio.loadVoices();
+        if (!SSU) {
+          SSU = new SpeechSynthesisUtterance();
+          //SSU.onboundary = (e) => console.log('onboundary', e);
+          SSU.onerror = (e) => console.error('SpeechSynthesisUtterance', e);
+          SSU.onstart = (e) => {
+            //console.log('onstart', e);
+            opt.onSpeakStart.call(self, e);
+          };
+          SSU.onend = (e) => {
+            //console.log('onend', e);
+            opt.onSpeakEnd.call(self, e);
+          };
+        }
       },
 
       speak: function(text) {
+        console.log('to speak @1', text);
+
+        if (!SSU) return;
+        if (!text) return;
         if (!this.isPresent) return;
-        if (MyAudio.synth.speaking) return;
+        if (this.isSpeaking) return; // TOOD: is it allow two parallel speakers?        
+
+        console.log('to speak @2', text);
 
         const trimmed = text.trim();
         if (!trimmed) return;
@@ -79,7 +102,7 @@ window.MtAudio = {
           voiceIndex = MtUtils.clamp(this.curVoice, 0, vlist.length);
         }
 
-        const voiceItem = voices[voiceIndex];
+        const voiceItem = this.voices[voiceIndex];
 
         SSU.text = trimmed;        
         SSU.voice = voiceItem;

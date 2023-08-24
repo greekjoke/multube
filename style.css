@@ -415,6 +415,7 @@ body.cap-position #gctrl i[action="gcRewindRand"]
 /* voices */
 .menu li.voices ul {
   width: 320px;
+  left: -200px;
 }
 
 /* vertical orientation */

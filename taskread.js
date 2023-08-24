@@ -47,6 +47,11 @@ window.MtTaskRead = function() {
       this.envelope.charset = v;      
       app.settingsWrite(true);
     },
+
+    
+    get isNeedSpeaking() {
+      return this.speaker && this.envelope.speak;      
+    },
         
     menuItems: [
       { id:'load', title:'Load from file' },
@@ -144,10 +149,12 @@ window.MtTaskRead = function() {
 
       if (id == 'speak') {        
         if (this.envelope.speak && this.speaker) {
+          this.reading.pauseAtEOS = true;
           this.speaker.init();
           this.createMenuVoices();
-          this.switchVoice(this.envelope.voice);
+          this.switchVoice(this.envelope.voice);          
         } else if (!this.envelope.speak) {
+          this.reading.pauseAtEOS = false;
           this.createMenuVoices();
         }
       } else {
@@ -193,7 +200,7 @@ window.MtTaskRead = function() {
       parent.init();
 
       this.setStatus('general', 'unready');
-      this.reading = false;
+      this.reading = false;      
       this.dataReady = false;      
       this.charset = this.charset || defaultCharset;      
       this.updateViewFlags();
@@ -212,7 +219,18 @@ window.MtTaskRead = function() {
         return;
       }
 
-      this.speaker = MtAudio.Speaker();      
+      const oldSpeaker = this.speaker;
+
+      this.speaker = MtAudio.Speaker({        
+        onSpeakEnd: (e) => {
+          console.log('onSpeakEnd');          
+          self.tryToSpeakText();
+        },
+      });      
+
+      if (oldSpeaker) {
+        this.speaker.init();
+      }
 
       if (isAbv(link)) {
         this.onTextReady(link);
@@ -233,7 +251,7 @@ window.MtTaskRead = function() {
       const td = new TextDecoder(this.charset);
       const text = td.decode(bin);
 
-      const rdOptions = {
+      const rdOptions = {        
         onStatusChanged: function() {
           if (!this.isPlaying && this.isPaused) {
             self.setStatus('general', 'paused');
@@ -246,6 +264,15 @@ window.MtTaskRead = function() {
         onEnded: function() {          
           self.setStatus('general', 'ended');
         },
+        onNext: function(startPos) {
+          const str = this.getSentence(startPos);
+          console.log('new senctence', str, startPos);
+          if (self.isNeedSpeaking) {
+            console.log('onReadingNext');
+            self.nextSpeakText = str;
+            self.tryToSpeakText();
+          }
+        },
       };
 
       const rd = new MtReading(rdOptions);
@@ -253,6 +280,21 @@ window.MtTaskRead = function() {
       rd.revText = this.envelope.rtext;
       rd.init(text, this.content);
       this.reading = rd; 
+    },
+
+    tryToSpeakText: function() {
+      const r = this.reading;
+      if (this.nextSpeakText) {
+        if (!this.speaker.isSpeaking) {
+          this.speaker.speak(this.nextSpeakText);
+          this.nextSpeakText = false;
+        }
+      }
+      if (r) {
+        if (r.isPaused) {
+          r.play(); // next reading
+        }
+      }
     },
 
     selectLink: function() {
@@ -292,8 +334,7 @@ window.MtTaskRead = function() {
     testVoice: function() {      
       const testText = this.content.find('.center').text();
       if (testText && this.speaker) {
-        // test speaking with current word
-        console.log('cur voice', this.speaker.curVoice);
+        // test speaking with current word        
         this.speaker.speak(testText);
       }
     },

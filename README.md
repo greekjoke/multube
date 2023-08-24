@@ -36,6 +36,7 @@
 - voice text (type, pitch, volume)
 - voice: left/right channels
 - reading: compress short text file and store it in the local storage
-- reading: position slider
+- reading: positioning slider
+- reading: антошка - fix sentences splitter
 - audio/yt player: save/restore volume
  -->
