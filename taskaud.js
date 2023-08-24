@@ -193,9 +193,28 @@ window.MtTaskAudio = function() {
       this.audioElem.src = link;
 
       this.content.append(this.audioElem);
+/*
+      AudioContext = window.AudioContext || window.webkitAudioContext;
+      const audioContext = new AudioContext();       // TODO: user gesture required
+      const track = audioContext.createMediaElementSource(this.audioElem);
+
+      const stereoNode = new StereoPannerNode(
+        audioContext, { pan: this.balance });
+      //stereoNode.pan.value = 1; // -1=left, 1=right, 0=center
+
+      track
+        .connect(stereoNode)
+        .connect(audioContext.destination);
+
+      this.stereoNode = stereoNode;
+      */
+    },
+
+    tryToInitAudio: function() {      
+      if (this.stereoNode) return;
 
       AudioContext = window.AudioContext || window.webkitAudioContext;
-      const audioContext = new AudioContext();      
+      const audioContext = new AudioContext(); 
       const track = audioContext.createMediaElementSource(this.audioElem);
 
       const stereoNode = new StereoPannerNode(
@@ -225,6 +244,7 @@ window.MtTaskAudio = function() {
 
     play: function() { 
       if (this.audioElem && this.isReady) {
+        this.tryToInitAudio();
         this.audioElem.play();
       }
     },
