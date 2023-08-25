@@ -16,18 +16,38 @@ window.MtAudio = {
     }
   },
 
-  loadVoices: function() {
-    if (this.voices !== false) return this.voices;
-    const list = (this.synth ? this.synth.getVoices() : false) || [];
-    console.log('voices', list);
-    if (!list || list.length < 1) {
-      $('body').addClass('voices-list-empty');
-      $('body').removeClass('voices-list');
-    } else {
-      $('body').removeClass('voices-list-empty');
-      $('body').addClass('voices-list');
+  prepareVoices: function(cb) {
+    const self = this;
+
+    if (!this.synth || this.voices !== false) {
+      this.voices = this.voices || [];
+      if (typeof(cb) === 'function') {
+        cb.call(self, this.voices);
+      }
     }
-    return this.voices = list;
+
+    console.log('prepareVoices');
+
+    const onVoices = function(list) {
+      console.log('voices', list);
+      if (!list || list.length < 1) {
+        $('body').addClass('voices-list-empty');
+        $('body').removeClass('voices-list');
+      } else {
+        $('body').removeClass('voices-list-empty');
+        $('body').addClass('voices-list');
+      }
+      self.voices = list;
+      if (typeof(cb) === 'function') {
+        cb.call(self, self.voices);
+      }
+    };
+
+    this.synth.onvoiceschanged = () => {
+      onVoices(self.synth.getVoices());
+    };
+
+    onVoices(this.synth.getVoices());
   },
 
   Speaker: function(opt) {
@@ -76,8 +96,8 @@ window.MtAudio = {
       rate: 1.0,
       pitch: 1.0,
 
-      init: function() {        
-        MtAudio.loadVoices();
+      init: function(cb) {        
+        MtAudio.prepareVoices(cb);
       },
 
       stop: function() {

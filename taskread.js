@@ -183,16 +183,19 @@ window.MtTaskRead = function() {
     },
 
     onMenuFlagChanged: function(id, value) {
+      const self = this;
+
       parent.onMenuFlagChanged(id, value);
 
       if (id == 'speak') {        
         if (this.envelope.speak && this.speaker) {
           this.reading.pauseAtEOS = true;
-          this.speaker.init();
-          this.createMenuVoices();
-          this.createMenuVoicePitch();
-          this.switchVoice(this.envelope.voice);
-          this.switchVoicePitch(this.envelope.voicePitch);
+          this.speaker.init(function() {
+            self.createMenuVoices();
+            self.createMenuVoicePitch();
+            self.switchVoice(self.envelope.voice);
+            self.switchVoicePitch(self.envelope.voicePitch);
+          });          
         } else if (!this.envelope.speak) {
           this.reading.pauseAtEOS = false;
           this.createMenuVoices();
@@ -298,7 +301,7 @@ window.MtTaskRead = function() {
         onStatusChanged: function(byUser) {
           if (!this.isPlaying && this.isPaused) {
             self.setStatus('general', 'paused');
-            if (!byUser) {
+            if (!byUser/* && this.speaker && !this.speaker.isSpeaking*/) {
               self.tryToSpeakText();
             }
             if (self.speaker && byUser) {
