@@ -38,7 +38,32 @@ window.MtAudio = {
 
     MtAudio.speakingInit();
 
-    let SSU = null;
+    const splitToParts = function(text) {
+      const partMaxLen = opt.partMaxLen || 120;
+      const ar = [];
+      let buf = '';      
+
+      text = text.trim();
+      text = text.replaceAll(/[\n\r]+/gi, ' ');    
+      text.split(' ').forEach(x => {
+        x = x.trim();
+        if (x.length < 1) return;
+        const str = buf + x;        
+        if (str.length > partMaxLen) {
+          ar.push(buf);
+          buf = x;
+        } else {
+          buf = str;
+        }
+        buf += ' ';
+      });    
+
+      if (buf.length > 0) {
+        ar.push(buf);
+      }
+
+      return ar;
+    };
 
     return {
 
@@ -51,27 +76,8 @@ window.MtAudio = {
       rate: 1.0,
       pitch: 1.0,
 
-      init: function() {
-        const self = this;
-
-        console.log('MtAudio.Speaker.init');
-        
+      init: function() {        
         MtAudio.loadVoices();
-
-        if (!SSU) {
-          console.log('MtAudio.Speaker.init', 'create SSU');
-          SSU = new SpeechSynthesisUtterance();
-          //SSU.onboundary = (e) => console.log('onboundary', e);
-          SSU.onerror = (e) => console.error('SpeechSynthesisUtterance', e);
-          SSU.onstart = (e) => {
-            //console.log('onstart', e);
-            opt.onSpeakStart.call(self, e);
-          };
-          SSU.onend = (e) => {
-            //console.log('onend', e);
-            opt.onSpeakEnd.call(self, e);
-          };
-        }
       },
 
       stop: function() {
@@ -93,20 +99,15 @@ window.MtAudio = {
       },
 
       speak: function(text) {
-        console.log('to speak @1', text);
-
-        if (!SSU) return;
-        if (!text) return;
-        if (!this.isPresent) return;
-        if (this.isSpeaking) return;
-
-        console.log('to speak @2', text);
+        if (!text) return false;
+        if (!this.isPresent) return false;
+        if (this.isSpeaking) return false;
 
         const trimmed = text.trim();
-        if (!trimmed) return;
+        if (!trimmed) return false;
 
         const vlist = this.voices || [];
-        if (vlist.length < 1) return;
+        if (vlist.length < 1) return false;
 
         let voiceIndex = false;
 
@@ -127,17 +128,30 @@ window.MtAudio = {
           voiceIndex = MtUtils.clamp(this.curVoice, 0, vlist.length);
         }
 
+        const self = this;
         const voiceItem = this.voices[voiceIndex];
+        const ar = splitToParts(trimmed);
 
-        SSU.text = trimmed;        
-        SSU.voice = voiceItem;
-        SSU.lang = voiceItem.lang;
-        SSU.volume = this.volume;
-        SSU.rate = this.rate;
-        SSU.pitch = this.pitch;
+        if (ar.length > 1)
+          console.warn('spk text splitted', ar);
 
         MtAudio.synth.cancel();
-        MtAudio.synth.speak(SSU);
+
+        ar.forEach(str => {
+          const u = new SpeechSynthesisUtterance();          
+          u.onerror = (e) => console.error('SpeechSynthesisUtterance', e);
+          u.onstart = (e) => opt.onSpeakStart.call(self, e);
+          u.onend = (e) => opt.onSpeakEnd.call(self, e);
+          u.text = str;
+          u.voice = voiceItem;
+          u.lang = voiceItem.lang;
+          u.volume = self.volume;
+          u.rate = self.rate;
+          u.pitch = self.pitch;
+          MtAudio.synth.speak(u);
+        });
+
+        return ar.length;
       },
 
     }; // obj

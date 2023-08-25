@@ -256,6 +256,9 @@ window.MtTaskRead = function() {
         onStatusChanged: function(byUser) {
           if (!this.isPlaying && this.isPaused) {
             self.setStatus('general', 'paused');
+            if (!byUser) {
+              self.tryToSpeakText();
+            }
             if (self.speaker && byUser) {
               self.speaker.pause();
             }
@@ -297,14 +300,16 @@ window.MtTaskRead = function() {
 
     tryToSpeakText: function() {
       const r = this.reading;
+      console.log('tryToSpeakText', this.nextSpeakText, r.isPaused);
       if (this.nextSpeakText) {
         if (!this.speaker.isSpeaking) {
-          this.speaker.speak(this.nextSpeakText);
-          this.nextSpeakText = false;
+          if (this.speaker.speak(this.nextSpeakText) !== false) {
+            this.nextSpeakText = false;
+          }
         }
       }
       if (r) {
-        if (r.isPaused) {
+        if (r.isPaused) {          
           r.play(); // next reading
         }
       }
