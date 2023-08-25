@@ -43,7 +43,8 @@ window.MtAudio = {
     return {
 
       get isPresent() { return !!MtAudio.synth; },
-      get isSpeaking() { return MtAudio.synth.speaking; },
+      get isSpeaking() { return MtAudio.synth && MtAudio.synth.speaking; },
+      get isPaused() { return MtAudio.synth && MtAudio.synth.paused; },
       get voices() { return MtAudio.voices; },      
       curVoice: 0,
       volume: 1.0,
@@ -52,8 +53,13 @@ window.MtAudio = {
 
       init: function() {
         const self = this;
+
+        console.log('MtAudio.Speaker.init');
+        
         MtAudio.loadVoices();
+
         if (!SSU) {
+          console.log('MtAudio.Speaker.init', 'create SSU');
           SSU = new SpeechSynthesisUtterance();
           //SSU.onboundary = (e) => console.log('onboundary', e);
           SSU.onerror = (e) => console.error('SpeechSynthesisUtterance', e);
@@ -68,13 +74,31 @@ window.MtAudio = {
         }
       },
 
+      stop: function() {
+        if (this.isSpeaking) {
+          MtAudio.synth.cancel();          
+        }
+      },
+
+      pause: function() {
+        if (this.isSpeaking) {
+          MtAudio.synth.pause();          
+        }
+      },
+
+      resume: function() {
+        if (this.isSpeaking) {
+          MtAudio.synth.resume();          
+        }
+      },
+
       speak: function(text) {
         console.log('to speak @1', text);
 
         if (!SSU) return;
         if (!text) return;
         if (!this.isPresent) return;
-        if (this.isSpeaking) return; // TOOD: is it allow two parallel speakers?        
+        if (this.isSpeaking) return;
 
         console.log('to speak @2', text);
 
@@ -93,6 +117,7 @@ window.MtAudio = {
           if (voiceIndex == -1) {
             voiceIndex = voices.findIndex( // fallback variant
               (voice) => (voice.lang === 'en-GB' || voice.lang === 'en-US')
+              //(voice) => (voice.lang === 'ru-RU')
             );
           }
           if (voiceIndex == -1) {
@@ -111,6 +136,7 @@ window.MtAudio = {
         SSU.rate = this.rate;
         SSU.pitch = this.pitch;
 
+        MtAudio.synth.cancel();
         MtAudio.synth.speak(SSU);
       },
 

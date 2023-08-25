@@ -152,7 +152,7 @@ window.MtTaskRead = function() {
           this.reading.pauseAtEOS = true;
           this.speaker.init();
           this.createMenuVoices();
-          this.switchVoice(this.envelope.voice);          
+          this.switchVoice(this.envelope.voice);
         } else if (!this.envelope.speak) {
           this.reading.pauseAtEOS = false;
           this.createMenuVoices();
@@ -229,6 +229,7 @@ window.MtTaskRead = function() {
       });      
 
       if (oldSpeaker) {
+        this.speaker.curVoice = this.envelope.voice || 0;
         this.speaker.init();
       }
 
@@ -252,17 +253,29 @@ window.MtTaskRead = function() {
       const text = td.decode(bin);
 
       const rdOptions = {        
-        onStatusChanged: function() {
+        onStatusChanged: function(byUser) {
           if (!this.isPlaying && this.isPaused) {
             self.setStatus('general', 'paused');
+            if (self.speaker && byUser) {
+              self.speaker.pause();
+            }
           } else if (this.isPlaying && !this.isPaused) {
             self.setStatus('general', 'playing');
+            if (self.speaker && byUser) {
+              self.speaker.resume();
+            }
           } else if (!this.isPlaying && !this.isPaused) {
             self.setStatus('general', 'ready');
+            if (self.speaker && byUser) {
+              self.speaker.stop();
+            }
           }
         },
         onEnded: function() {          
           self.setStatus('general', 'ended');
+          if (self.speaker) {
+            //self.speaker.stop();
+          }
         },
         onNext: function(startPos) {
           const str = this.getSentence(startPos);
@@ -357,21 +370,21 @@ window.MtTaskRead = function() {
     },
 
     play: function() { 
-      if (this.reading && this.isReady) {
-        this.reading.play();
-      }
+      if (this.reading && this.isReady) {        
+        this.reading.play(true);        
+      }      
     },
 
     stop: function() { 
       if (this.reading && this.isReady) {
-        this.reading.stop();
-      }
+        this.reading.stop(true);        
+      }      
     },
     
     pause: function() { 
       if (this.reading && this.isReady) {
-        this.reading.pause();
-      }
+        this.reading.pause(true);        
+      }      
     },
 
     speed: function(v) { 

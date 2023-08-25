@@ -205,14 +205,14 @@ window.MtReading = function(opt) {
 
       this.stop();
 
-      uiElem.find('.bnPrev').click(() => self.prev());
-      uiElem.find('.bnNext').click(() => self.next());
-      uiElem.find('.bnPlay').click(() => self.play());
-      uiElem.find('.bnStop').click(() => self.stop());
-      uiElem.find('.bnPause').click(() => self.pause());
+      uiElem.find('.bnPrev').click(() => self.prev(true));
+      uiElem.find('.bnNext').click(() => self.next(true));
+      uiElem.find('.bnPlay').click(() => self.play(true));
+      uiElem.find('.bnStop').click(() => self.stop(true));
+      uiElem.find('.bnPause').click(() => self.pause(true));
     },
 
-    next: function() {      
+    next: function(byUser) {      
       const oldEOS = EOS;
       const oldPos = position;
       const ar = getNearestString(position + 1);           
@@ -239,7 +239,7 @@ window.MtReading = function(opt) {
       }
     },
 
-    prev: function() {      
+    prev: function(byUser) {      
       const ar = getNearestString(position - 1, true);      
       if (ar) {        
         position -= ar.length;        
@@ -260,7 +260,7 @@ window.MtReading = function(opt) {
       }
     },
 
-    play: function() {
+    play: function(byUser) {
       const self = this;      
       const old = isPlay;
       const old2 = isPaused;
@@ -273,21 +273,21 @@ window.MtReading = function(opt) {
       timer = setTimeout(() => self.next(), delay);
 
       if (isPlay !== old || isPaused != old2) {
-        opt.onStatusChanged.call(this);
+        opt.onStatusChanged.call(this, byUser);
       }
     },
 
-    pause: function() {
+    pause: function(byUser) {
       const old = isPlay;
       const old2 = isPaused;
       isPlay = false;
       isPaused = true;
       if (isPlay !== old || isPaused != old2) {
-        opt.onStatusChanged.call(this);
+        opt.onStatusChanged.call(this, byUser);
       }
     },
 
-    stop: function() {
+    stop: function(byUser) {
       const old = isPlay;
       const old2 = isPaused;
       clearTimeout(timer);
@@ -298,7 +298,7 @@ window.MtReading = function(opt) {
       printString('---');
       updateCounters();
       if (isPlay !== old || isPaused != old2) {
-        opt.onStatusChanged.call(this);
+        opt.onStatusChanged.call(this, byUser);
       }
     },
 
