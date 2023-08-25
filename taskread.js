@@ -416,8 +416,8 @@ window.MtTaskRead = function() {
       app.settingsWrite(true);
     },
 
-    switchVoicePitch: function(v) {      
-      v = parseInt(v);
+    switchVoicePitch: function(v) {        
+      v = parseInt(typeof(v) === 'undefined' ? 2 : v);
       //if (this.envelope.voicePitch === v) return;            
       this.envelope.voicePitch = v;
       if (this.speaker) {
