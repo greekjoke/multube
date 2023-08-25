@@ -33,10 +33,7 @@
 - экспорт/импорт настроек: [смотреть](https://youtu.be/SZJx5nXTsdo?t=434)
 
 <!-- TODO:
-- voice text (type, pitch, volume)
-- voice: left/right channels
 - reading: compress short text file and store it in the local storage
 - reading: positioning slider
-- reading: антошка - fix sentences splitter
 - audio/yt player: save/restore volume
  -->

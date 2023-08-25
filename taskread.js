@@ -14,6 +14,14 @@ window.MtTaskRead = function() {
     { id:'x-mac-cyrillic', title:'x-mac-cyrillic'},    
   ];
 
+  const menuVoicePitch = [    
+    { title:'Lowest', value:0.5},
+    { title:'Lower', value:0.75},
+    { title:'Normal', value:1},
+    { title:'Higher', value:1.25},
+    { title:'Highest', value:1.5},
+  ];
+
   const isRemoteLink = function(link) {    
     return link.toLowerCase().indexOf('http') === 0 ||
            link.toLowerCase().indexOf('media/') === 0;
@@ -47,7 +55,6 @@ window.MtTaskRead = function() {
       this.envelope.charset = v;      
       app.settingsWrite(true);
     },
-
     
     get isNeedSpeaking() {
       return this.speaker && this.envelope.speak;      
@@ -108,6 +115,32 @@ window.MtTaskRead = function() {
       return sub;
     },
 
+    createMenuVoicePitch: function(elem) {
+      elem = elem || this.element;
+
+      const htmlCheck = '<i class="fa-solid fa-check"></i>';
+      const m = elem.find('.bar .settings .submenu');
+      const list = menuVoicePitch;
+      
+      m.find('li.pitch').remove(); // remove old menu
+
+      if (list.length < 1 || !this.envelope.speak)
+        return;
+
+      const sub = $('<ul action="taskCmd" class="has-flags"></ul>');
+
+      list.forEach((x, i) => {                
+        sub.append(`<li value="pitch:${i}" flag="0" title="${x.title}">${htmlCheck}${x.title}</li>`);
+      });
+      
+      const item = $('<li class="pitch"><b>Voice pitch</b></li>');
+      item.append(sub);
+      //m.append(item);
+      item.insertAfter(m.find('li[value="speak"]'));
+
+      return sub;
+    },
+
     isSupport: function(cap) {      
       return suportCaps.indexOf(cap) != -1;
     },
@@ -121,6 +154,11 @@ window.MtTaskRead = function() {
       if (code.indexOf('voice:') === 0) {
         code = code.substr('voice:'.length);
         this.switchVoice(code);
+        return;
+      }  
+      if (code.indexOf('pitch:') === 0) {
+        code = code.substr('pitch:'.length);
+        this.switchVoicePitch(code);
         return;
       }  
       switch(code) {
@@ -152,10 +190,13 @@ window.MtTaskRead = function() {
           this.reading.pauseAtEOS = true;
           this.speaker.init();
           this.createMenuVoices();
+          this.createMenuVoicePitch();
           this.switchVoice(this.envelope.voice);
+          this.switchVoicePitch(this.envelope.voicePitch);
         } else if (!this.envelope.speak) {
           this.reading.pauseAtEOS = false;
           this.createMenuVoices();
+          this.createMenuVoicePitch();
         }
       } else {
         this.updateViewFlags();      
@@ -230,6 +271,7 @@ window.MtTaskRead = function() {
 
       if (oldSpeaker) {
         this.speaker.curVoice = this.envelope.voice || 0;
+        this.speaker.pitch = menuVoicePitch[this.envelope.voicePitch || 2].value;
         this.speaker.init();
       }
 
@@ -282,7 +324,7 @@ window.MtTaskRead = function() {
         },
         onNext: function(startPos) {
           const str = this.getSentence(startPos);
-          console.log('new senctence', str, startPos);
+          //console.log('new sentence', str, startPos);
           if (self.isNeedSpeaking) {
             console.log('onReadingNext');
             self.nextSpeakText = str;
@@ -300,7 +342,7 @@ window.MtTaskRead = function() {
 
     tryToSpeakText: function() {
       const r = this.reading;
-      console.log('tryToSpeakText', this.nextSpeakText, r.isPaused);
+      //console.log('tryToSpeakText', this.nextSpeakText, r.isPaused);
       if (this.nextSpeakText) {
         if (!this.speaker.isSpeaking) {
           if (this.speaker.speak(this.nextSpeakText) !== false) {
@@ -374,6 +416,18 @@ window.MtTaskRead = function() {
       app.settingsWrite(true);
     },
 
+    switchVoicePitch: function(v) {      
+      v = parseInt(v);
+      //if (this.envelope.voicePitch === v) return;            
+      this.envelope.voicePitch = v;
+      if (this.speaker) {
+        this.speaker.pitch = menuVoicePitch[v].value;
+      }      
+      const m = this.element.find('.bar .settings .submenu .pitch');      
+      app.updateSwithFlags(m, 'pitch:'+v);
+      app.settingsWrite(true);
+    },
+
     play: function() { 
       if (this.reading && this.isReady) {        
         this.reading.play(true);        
@@ -395,6 +449,9 @@ window.MtTaskRead = function() {
     speed: function(v) { 
       if (this.reading && this.isReady) {
         this.reading.speed = v;
+      }
+      if (this.speaker) {
+        this.speaker.rate = v;
       }
     },
 

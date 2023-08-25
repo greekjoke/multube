@@ -269,7 +269,7 @@ window.MtReading = function(opt) {
       isPlay = true;
       isPaused = false;
 
-      console.log('reading.play', byUser);
+      //console.log('reading.play', byUser);
 
       const delay = calcDelay();      
       timer = setTimeout(() => self.next(), delay);
@@ -285,7 +285,7 @@ window.MtReading = function(opt) {
       isPlay = false;
       isPaused = true;
 
-      console.log('reading.pause', byUser);
+      //console.log('reading.pause', byUser);
 
       if (isPlay !== old || isPaused != old2) {
         opt.onStatusChanged.call(this, byUser);

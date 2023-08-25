@@ -132,8 +132,8 @@ window.MtAudio = {
         const voiceItem = this.voices[voiceIndex];
         const ar = splitToParts(trimmed);
 
-        if (ar.length > 1)
-          console.warn('spk text splitted', ar);
+        // if (ar.length > 1)
+        //   console.warn('spk text splitted', ar);
 
         MtAudio.synth.cancel();
 
