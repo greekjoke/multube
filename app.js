@@ -258,7 +258,7 @@ window.MtApp = {
     if (deferred) {
       const self = this;      
       clearTimeout(this._deferredSettingsWriteTimer);            
-      _deferredSettingsWriteTimer = setTimeout(function() {        
+      this._deferredSettingsWriteTimer = setTimeout(function() {        
         self.settingsWrite();
       }, 500);
       return;

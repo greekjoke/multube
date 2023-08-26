@@ -26,8 +26,6 @@ window.MtAudio = {
       }
     }
 
-    console.log('prepareVoices');
-
     const onVoices = function(list) {
       console.log('voices', list);
       if (!list || list.length < 1) {

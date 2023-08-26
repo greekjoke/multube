@@ -32,6 +32,14 @@ window.MtTaskAudio = function() {
 
     get type() { return 'MtTaskAudio'; },
     get isReady() { return this.playerReady; },
+
+    get volume() { return this.envelope.volume || 100; },
+    set volume(v) {
+      v = parseInt(v);
+      if (this.envelope.volume === v) return;
+      this.envelope.volume = v;
+      app.settingsWrite(true);      
+    },
     
     menuItems: [
       { id:'load', title:'Load from file' },
@@ -168,7 +176,7 @@ window.MtTaskAudio = function() {
 
       this.audioElem = $('<audio controls="controls"></audio>')[0];
 
-      $(this.audioElem).on('canplay ended pause play loadedmetadata', e => {
+      $(this.audioElem).on('canplay ended pause play loadedmetadata volumechange', e => {
         switch(e.type) {
           case 'loadedmetadata':
             //console.log('meta', e);
@@ -176,6 +184,7 @@ window.MtTaskAudio = function() {
           case 'canplay':
             self.playerReady = true;
             self.setStatus('general', 'ready');
+            self.audioElem.volume = self.volume * 0.01;
             break;
           case 'ended':
             self.setStatus('general', 'ended');
@@ -186,6 +195,9 @@ window.MtTaskAudio = function() {
           case 'play':
             self.tryToInitAudioExt();  
             self.setStatus('general', 'playing');            
+            break;
+          case 'volumechange':
+            self.volume = self.audioElem.volume * 100;
             break;
         }        
       });

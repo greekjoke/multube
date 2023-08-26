@@ -1,6 +1,8 @@
 /* youtube video task */
 
 window.MtTaskYt = function() {
+  MtTaskYt.initOnce();
+
   const app = MtApp;
   const defaultYoutubeVideo = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
   const suportCaps = [MtTask.CAPS.PLAYBACK, MtTask.CAPS.VOLUME, MtTask.CAPS.SPEED, MtTask.CAPS.POSITION];
@@ -18,6 +20,14 @@ window.MtTaskYt = function() {
     get type() { return 'MtTaskYt'; },
     get isReady() { return this.playerReady; },
     get link() { return this.envelope.link; },
+
+    get volume() { return this.envelope.volume || 100; },
+    set volume(v) {
+      v = parseInt(v);
+      if (this.envelope.volume === v) return;
+      this.envelope.volume = v;
+      app.settingsWrite(true);      
+    },
 
     menuItems: [
       { id:'select', title:'Select Youtube video' },      
@@ -72,6 +82,7 @@ window.MtTaskYt = function() {
           self.title = data.title;          
         }        
         self.addRecent(self.title, self.link);
+        self.player.setVolume(self.volume);
       };
     
       const onPlayerStateChange = function(event) {        
@@ -99,6 +110,24 @@ window.MtTaskYt = function() {
           'onStateChange': onPlayerStateChange
         }
       });
+    },
+
+    onWindowMessage: function(event) {
+      if (!this.player) return;      
+      const ifr = this.player.getIframe().contentWindow;
+      if (event.source !== ifr) return;          
+      const data = JSON.parse(event.data);
+    
+      // The "infoDelivery" event is used by YT to transmit any
+      // kind of information change in the player,
+      // such as the current time or a volume change.
+      if (
+        data.event === "infoDelivery" &&
+        data.info &&
+        data.info.volume
+      ) {        
+        this.volume = data.info.volume;
+      }
     },
 
     switchToLink: function(link) {
@@ -190,4 +219,17 @@ function onYouTubeIframeAPIReady() {
     if (t.type !== 'MtTaskYt') continue;
     t.init();
   }
+}
+
+window.MtTaskYt.initOnce = function() {  
+  if (window.MtTaskYt.__initOnce) return;
+  window.MtTaskYt.__initOnce = true;
+  window.addEventListener("message", function(event) {
+    for(let id in MtApp.tlist) {
+      const t = MtApp.tlist[id];
+      if (t.type === 'MtTaskYt') {
+        t.onWindowMessage(event); // dispatch to task
+      }
+    }    
+  });  
 }
