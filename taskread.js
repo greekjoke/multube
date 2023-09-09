@@ -22,6 +22,21 @@ window.MtTaskRead = function() {
     { title:'Highest', value:1.5},
   ];
 
+  const menuSpeed = [    
+    { title:'0.25', value:0.25},
+    { title:'0.5', value:0.5},
+    { title:'0.75', value:0.75},
+    { title:'Normal', value:1},
+    { title:'1.25', value:1.25},
+    { title:'1.5', value:1.5},
+    { title:'1.75', value:1.75},
+    { title:'x2', value:2},
+    { title:'x3', value:3},
+    { title:'x5', value:5},
+    { title:'x10', value:10},
+    
+  ];
+
   const isRemoteLink = function(link) {    
     return link.toLowerCase().indexOf('http') === 0 ||
            link.toLowerCase().indexOf('media/') === 0;
@@ -86,6 +101,8 @@ window.MtTaskRead = function() {
       item.append(sub);
       m.append(item);
 
+      this.createMenuSpeed(elem);
+
       return m;
     },
 
@@ -141,6 +158,31 @@ window.MtTaskRead = function() {
       return sub;
     },
 
+    createMenuSpeed: function(elem) {
+      elem = elem || this.element;
+
+      const htmlCheck = '<i class="fa-solid fa-check"></i>';
+      const m = elem.find('.bar .settings .submenu');
+      const list = menuSpeed;
+      
+      m.find('li.speed').remove(); // remove old menu
+      
+      if (list.length < 1)
+        return;
+
+      const sub = $('<ul action="taskCmd" class="has-flags"></ul>');
+
+      list.forEach((x, i) => {                
+        sub.append(`<li value="speed:${x.value}" flag="0" title="${x.title}">${htmlCheck}${x.title}</li>`);
+      });
+
+      const item = $('<li class="speed"><b>Speed</b></li>');
+      item.append(sub);            
+      item.insertBefore(m.find('li.charset'));
+
+      return sub;
+    },
+
     isSupport: function(cap) {      
       return suportCaps.indexOf(cap) != -1;
     },
@@ -159,6 +201,11 @@ window.MtTaskRead = function() {
       if (code.indexOf('pitch:') === 0) {
         code = code.substr('pitch:'.length);
         this.switchVoicePitch(code);
+        return;
+      }  
+      if (code.indexOf('speed:') === 0) {
+        code = code.substr('speed:'.length);
+        this.switchSpeed(code);
         return;
       }  
       switch(code) {
@@ -194,7 +241,8 @@ window.MtTaskRead = function() {
             self.createMenuVoices();
             self.createMenuVoicePitch();
             self.switchVoice(self.envelope.voice);
-            self.switchVoicePitch(self.envelope.voicePitch);
+            self.switchVoicePitch(self.envelope.voicePitch);            
+            self.speed(self.envelope.speed);
           });          
         } else if (!this.envelope.speak) {
           this.reading.pauseAtEOS = false;
@@ -246,9 +294,11 @@ window.MtTaskRead = function() {
       this.setStatus('general', 'unready');
       this.reading = false;      
       this.dataReady = false;      
-      this.charset = this.charset || defaultCharset;      
+      this.charset = this.charset || defaultCharset;   
+      this.envelope.speed = this.envelope.speed || 1.0;
       this.updateViewFlags();
       this.switchCharset(this.charset);      
+      this.switchSpeed(this.envelope.speed);
       this.content.html(''); // clear
 
       link = link || this.link;
@@ -431,6 +481,21 @@ window.MtTaskRead = function() {
       app.settingsWrite(true);
     },
 
+    __switchSpeedInside: false,
+
+    switchSpeed: function(v) {   
+      if (this.__switchSpeedInside) return;
+      this.__switchSpeedInside = true;
+      v = parseFloat(typeof(v) === 'undefined' ? 1.0 : v);
+      //if (this.envelope.speed === v) return;            
+      this.envelope.speed = v;
+      this.speed(v);      
+      const m = this.element.find('.bar .settings .submenu .speed');
+      app.updateSwithFlags(m, 'speed:'+v);
+      app.settingsWrite(true);
+      this.__switchSpeedInside = false;
+    },
+
     play: function() { 
       if (this.reading && this.isReady) {        
         this.reading.play(true);        
@@ -453,9 +518,10 @@ window.MtTaskRead = function() {
       if (this.reading && this.isReady) {
         this.reading.speed = v;
       }
-      if (this.speaker) {
+      if (this.speaker) {        
         this.speaker.rate = v;
       }
+      this.switchSpeed(v);
     },
 
     duration: function() { 
