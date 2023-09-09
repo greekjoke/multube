@@ -61,6 +61,9 @@ window.MtReading = function(opt) {
     if (revText) {
        i = lexemes.length - i - 1;
     }
+    if (i < 0 || i >= lexemes.length) {
+      return false;
+    }
     return lexemes[i];
   };
 
@@ -114,6 +117,7 @@ window.MtReading = function(opt) {
     let c = '';    
     while (!isEndChar(c)) {
       const x = getLexeme(i);
+      if (x === false) break;
       if (typeof(x) === 'object') {
         list.push(c = x.char);
       } else {
@@ -227,8 +231,7 @@ window.MtReading = function(opt) {
       if (slider.length > 0) {
         slider.change(function() {
           const pct = slider.val();
-          const pos = pctToPos(pct);
-          console.log('slider', pct, pos);
+          const pos = pctToPos(pct);          
           if (pos < 0) {
             self.stop();
           } else {          
@@ -240,23 +243,24 @@ window.MtReading = function(opt) {
 
     next: function(byUser) {      
       const oldEOS = EOS;
-      const oldPos = position;
-      const ar = getNearestString(position + 1);           
+      const oldPos = position;      
+      const ar = getNearestString(position + 1);      
       if (ar) {        
         position += ar.length;        
         printString(ar);
-        updateCounters();
+        updateCounters();        
         if (isPlay) {
-          if (uiContainer.find('#' + instId).length === 0)
+          if (uiContainer.find('#' + instId).length === 0) {            
             return; // seems that our view has been removed from the container
-          if (pauseAtEOS && EOS) {
-            this.pause();
-          } else {
-            this.play();
+          }
+          if (pauseAtEOS && EOS) {            
+            this.pause();            
+          } else {            
+            this.play();            
           }          
-          if (oldEOS) {
+          if (oldEOS) {            
             opt.onNext.call(this, oldPos + 1, position);
-          } else if (EOS) {
+          } else if (EOS) {            
             opt.onEOS.call(this, position);
           }        
         }        

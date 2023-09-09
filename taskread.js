@@ -376,9 +376,8 @@ window.MtTaskRead = function() {
           }
         },
         onNext: function(startPos) {
-          const str = this.getSentence(startPos);
-          //console.log('new sentence', str, startPos);
-          if (self.isNeedSpeaking) {
+          if (self.isNeedSpeaking) {            
+            const str = this.getSentence(startPos);
             console.log('onReadingNext');            
             self.nextSpeakText = this.revWord ? MtUtils.reverse(str) : str;
             self.tryToSpeakText();
