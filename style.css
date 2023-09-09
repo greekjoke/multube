@@ -469,3 +469,37 @@ body[color-scheme="dark"] #widgets {
 body[color-scheme="dark"] .task {  
   background-color: silver;
 }
+
+/* layout rc3x4 */
+body[layout="rc3x4"] .task {  
+  min-width: 22%;
+}
+
+/* layout rc4x3 */
+body[layout="rc4x3"] .task {  
+  min-height: 22vh;
+}
+
+/* layout rc4x4 */
+body[layout="rc4x4"] .task {  
+  min-width: 22%;
+  min-height: 22vh;
+}
+
+/* layout rc4x5 */
+body[layout="rc4x5"] .task {  
+  min-width: 18%;
+  min-height: 22vh;
+}
+
+/* layout rc5x4 */
+body[layout="rc5x4"] .task {  
+  min-width: 22%;
+  min-height: 18vh;
+}
+
+/* layout rc5x5 */
+body[layout="rc5x5"] .task {  
+  min-width: 18%;
+  min-height: 18vh;
+}

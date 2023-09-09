@@ -50,6 +50,4 @@
 - reading: speaking reversed words
 - reading: adjust scale of text field
 - reading: implement ui for speed control
-- option: tasks grid layouts list (now 9 is max)
-- task: show remote resource error text in the task's placeholder
  -->

@@ -7,6 +7,7 @@ window.MtApp = {
     timestamp: '',
     curLang: 'en',
     curScheme: 'default',
+    curLayout: 'default',
     curPreset: 'default',    
     presets: [
       {
@@ -34,10 +35,12 @@ window.MtApp = {
     }
 
     this.updateMenuPresets();
-    this.updateSwithFlags('#topmenuColors', this.settings.curScheme);
+    this.updateSwithFlags('#topmenuColors', this.settings.curScheme || 'default');
+    this.updateSwithFlags('#topmenuLayout', this.settings.curLayout || 'default');
     this.updatePreset();
 
     $('body').attr('color-scheme', this.settings.curScheme || 'default');
+    $('body').attr('layout', this.settings.curLayout || 'default');
 
     this.ready = true;
   },
@@ -249,6 +252,20 @@ window.MtApp = {
     $('body').attr('color-scheme', value);
 
     this.updateSwithFlags('#topmenuColors', value);
+    this.settingsWrite();
+  },
+
+  switchLayout: function(value) {
+    const cur = this.settings.curLayout;
+
+    if (value === cur)
+      return; // already
+
+    this.settings.curLayout = value;
+
+    $('body').attr('layout', value);
+
+    this.updateSwithFlags('#topmenuLayout', value);
     this.settingsWrite();
   },
 
