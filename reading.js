@@ -146,7 +146,19 @@ window.MtReading = function(opt) {
     const passed = position;
     const left = lexemes.length - position;
     uiElem.find('.sidebar-left').text(passed);
-    uiElem.find('.sidebar-right').text(left);
+    uiElem.find('.sidebar-right').text(left);    
+    uiElem.find('.curPos').val(posToPct(position));
+  };
+
+  const posToPct = function(v) {
+    if (lexemes.length <= 0) return false;
+    const pct = parseInt(100.0 * (position + 1) / lexemes.length);
+    return MtUtils.clamp(pct, 0, 100);
+  };
+
+  const pctToPos = function(v) {
+    if (lexemes.length <= 0) return false;
+    return parseInt(0.01 * parseFloat(v) * lexemes.length);// - 1;
   };
 
   const calcDelay = function() {    
@@ -210,6 +222,20 @@ window.MtReading = function(opt) {
       uiElem.find('.bnPlay').click(() => self.play(true));
       uiElem.find('.bnStop').click(() => self.stop(true));
       uiElem.find('.bnPause').click(() => self.pause(true));
+
+      const slider = uiElem.find('.curPos');
+      if (slider.length > 0) {
+        slider.change(function() {
+          const pct = slider.val();
+          const pos = pctToPos(pct);
+          console.log('slider', pct, pos);
+          if (pos < 0) {
+            self.stop();
+          } else {          
+            self.seek(pos);
+          }
+        });
+      }
     },
 
     next: function(byUser) {      

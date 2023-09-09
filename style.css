@@ -377,8 +377,7 @@ body.cap-position #gctrl i[action="gcRewindRand"]
 .reading-view .sidebar-bottom {
   display: inline-block;  
   width: 100%;
-  padding: 1rem;
-  margin-top: 1rem;
+  padding: 1rem;  
 }
 .reading-view .center {
   display: inline-block;  
@@ -392,6 +391,11 @@ body.cap-position #gctrl i[action="gcRewindRand"]
 }
 .reading-view .center.long-word {
   font-size: 3vw;
+}
+.reading-view input.curPos {
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
 }
 .task.view-mhoriz .reading-view .center {  
   -moz-transform: scale(-1, 1);
