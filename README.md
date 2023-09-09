@@ -46,6 +46,5 @@
 <!-- TODO:
 - reading: compress short text file and store it in the local storage
 - reading: check features of exists popular readers & implement some one
-- reading: speaking reversed words
 - reading: adjust scale of text field
  -->
