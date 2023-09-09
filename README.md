@@ -32,6 +32,13 @@
 - цветовые схемы: [смотреть](https://youtu.be/SZJx5nXTsdo?t=429)
 - экспорт/импорт настроек: [смотреть](https://youtu.be/SZJx5nXTsdo?t=434)
 
+## Читалка текстов
+
+- скорость смены слов управляется глобально.
+- время отображения слова зависит от его длины.
+- в конце предложения делается чуть более долгая пауза.
+- озвучивание текста экспериментальная функция, пока не планирую поддерживать/развивать.
+
 ## Озвучивание текста
 
 Неплохой встроенный движок синтеза голоса есть в браузере Google Chrome (по крайней мере английский). Но, к сожалению, поддержитвается только однопоточный синтез (нельзя озвучивать одновременно несколько текстов) и не поддерживается управление каналами (левый/правый).
@@ -39,5 +46,10 @@
 <!-- TODO:
 - reading: compress short text file and store it in the local storage
 - reading: positioning slider
-- audio/yt player: save/restore volume
+- reading: check features of exists popular readers & implement some one
+- reading: speaking reversed words
+- reading: adjust scale of text field
+- reading: implement ui for speed control
+- option: tasks grid layouts list (now 9 is max)
+- task: show remote resource error text in the task's placeholder
  -->
