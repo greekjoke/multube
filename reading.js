@@ -8,7 +8,7 @@ window.MtReading = function(opt) {
   opt.onEOS = opt.onEOS || function(){};
   opt.onNext = opt.onNext || function(){};
 
-  const timerDelay = opt.timerDelay || 400;
+  const timerDelay = opt.timerDelay || 350;
   const eosDelayRatio = opt.eosDelayRatio || 0.7;
   const wordMaxDelayRatio = opt.wordMaxDelayRatio || 0.7;
   const wordLenNorm = opt.wordLenNorm || 5;

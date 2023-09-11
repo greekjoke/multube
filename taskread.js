@@ -297,8 +297,7 @@ window.MtTaskRead = function() {
       this.charset = this.charset || defaultCharset;   
       this.envelope.speed = this.envelope.speed || 1.0;
       this.updateViewFlags();
-      this.switchCharset(this.charset);      
-      this.switchSpeed(this.envelope.speed);
+      this.switchCharset(this.charset);            
       this.content.html(''); // clear
 
       link = link || this.link;
@@ -324,9 +323,11 @@ window.MtTaskRead = function() {
 
       if (oldSpeaker) {
         this.speaker.curVoice = this.envelope.voice || 0;
-        this.speaker.pitch = menuVoicePitch[this.envelope.voicePitch || 2].value;
+        this.speaker.pitch = menuVoicePitch[this.envelope.voicePitch || 2].value;        
         this.speaker.init();
       }
+
+      this.speaker.rate = this.envelope.speed || 1;
 
       if (isAbv(link)) {
         this.onTextReady(link);
@@ -342,7 +343,8 @@ window.MtTaskRead = function() {
 
       this.binData = bin;
       this.dataReady = true;
-      this.setStatus('general', 'ready');            
+      this.setStatus('general', 'ready');    
+             
 
       const td = new TextDecoder(this.charset);
       const text = td.decode(bin);
@@ -390,6 +392,8 @@ window.MtTaskRead = function() {
       rd.revText = this.envelope.rtext;
       rd.init(text, this.content);
       this.reading = rd; 
+
+      this.switchSpeed(this.envelope.speed);
     },
 
     tryToSpeakText: function() {
@@ -483,10 +487,10 @@ window.MtTaskRead = function() {
     __switchSpeedInside: false,
 
     switchSpeed: function(v) {   
-      if (this.__switchSpeedInside) return;
-      this.__switchSpeedInside = true;
+      if (this.__switchSpeedInside) return;      
       v = parseFloat(typeof(v) === 'undefined' ? 1.0 : v);
       //if (this.envelope.speed === v) return;            
+      this.__switchSpeedInside = true;
       this.envelope.speed = v;
       this.speed(v);      
       const m = this.element.find('.bar .settings .submenu .speed');
@@ -513,8 +517,8 @@ window.MtTaskRead = function() {
       }      
     },
 
-    speed: function(v) { 
-      if (this.reading && this.isReady) {
+    speed: function(v) {       
+      if (this.reading && this.isReady) {        
         this.reading.speed = v;
       }
       if (this.speaker) {        
