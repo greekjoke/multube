@@ -61,16 +61,16 @@ window.MtTaskYt = function() {
     init: function() {   
       console.log('MtTaskYt.init@1');
 
+      parent.init();
+
+      this.setStatus('general', 'unready');
+      this.playerReady = false;
+
       if (!window.MtTaskYt.YouTubeIframeAPIReady) {
         //console.error('YoutubeAPI is not ready');
         this.content.html('<span class="error">Youtube API is not ready</span>');
         return;
       }
-
-      parent.init();
-
-      this.setStatus('general', 'unready');
-      this.playerReady = false;
 
       const self = this;      
       const link = this.envelope.link;            
