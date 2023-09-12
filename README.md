@@ -44,7 +44,6 @@
 Неплохой встроенный движок синтеза голоса есть в браузере Google Chrome (по крайней мере английский). Но, к сожалению, поддержитвается только однопоточный синтез (нельзя озвучивать одновременно несколько текстов) и не поддерживается управление каналами (левый/правый).
 
 <!-- TODO:
-- yt: save/restore speed rate
 - reading: compress short text file and store it in the local storage
 - reading: check features of exists popular readers & implement some one
 - reading: adjust scale of text field
