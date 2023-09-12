@@ -23,6 +23,7 @@ window.MtApp = {
   ready: false,
   maxRecentItems: 10,
   samples: {},
+  options: {},
 
   init: function(opt) {
     opt = opt || {};
@@ -34,13 +35,19 @@ window.MtApp = {
       console.info('settings loading was ignoreed by query key');
     }
 
-    this.updateMenuPresets();
-    this.updateSwithFlags('#topmenuColors', this.settings.curScheme || 'default');
-    this.updateSwithFlags('#topmenuLayout', this.settings.curLayout || 'default');
+    this.options = opt;
+    this.options.layoutWidth = this.options.layoutWidth || 5;    
+    this.options.layoutHeight = this.options.layoutHeight || 5;
+
+    this.createMenuLayout();
+    this.updateMenuPresets();    
+    this.updateSwithFlags('#topmenuColors', this.settings.curScheme || 'default');    
     this.updatePreset();
 
     $('body').attr('color-scheme', this.settings.curScheme || 'default');
-    $('body').attr('layout', this.settings.curLayout || 'default');
+    
+    this.settings.curLayout = this.getLayoutNumeric();
+    this.updateLayoutAttrs();
 
     this.ready = true;
   },
@@ -257,21 +264,39 @@ window.MtApp = {
     $('body').attr('color-scheme', value);
 
     this.updateSwithFlags('#topmenuColors', value);
-    this.settingsWrite();
+    this.settingsWrite(true);
   },
 
   switchLayout: function(value) {
     const cur = this.settings.curLayout;
-
+    value = parseInt(value);
+    
     if (value === cur)
       return; // already
 
     this.settings.curLayout = value;
+    
+    this.updateLayoutAttrs();
+    this.settingsWrite(true);    
+  },
 
+  getLayoutNumeric: function() {    
+    const width = this.options.layoutWidth;
+    const height = this.options.layoutHeight;
+    const def = width * 2 + 2;    
+    if (typeof this.settings.curLayout !== 'number')
+      return def
+    return this.settings.curLayout;
+  },
+
+  updateLayoutAttrs: function() {
+    const width = this.options.layoutWidth;
+    const value = this.settings.curLayout;        
+    const y = Math.floor(value / width);
+    const x = value - y * width;
     $('body').attr('layout', value);
-
-    this.updateSwithFlags('#topmenuLayout', value);
-    this.settingsWrite();
+    $('body').attr('layout-w', x);
+    $('body').attr('layout-h', y);
   },
 
   _deferredSettingsWriteTimer: null,
@@ -595,6 +620,34 @@ window.MtApp = {
           con.addClass(`cap-${str}`);
         }
       }
+    });
+  },
+
+  createMenuLayout: function() {        
+    const width = this.options.layoutWidth;
+    const height = this.options.layoutHeight;
+    const cnt = width * height;
+    const htmlSquare = '<div class="sqr-button"><div class="sqr-item"></div></div>';
+    $('.layout-selector').each(function() {
+      const con = $(this);
+      con.html('');      
+      let i = 0;      
+      while(i < cnt) {        
+        const y = Math.floor(i / width);
+        const x = i - y * width;
+        const sqr = $(htmlSquare);
+        sqr.attr('value', i);
+        sqr.on('mouseover', function() {          
+          con.attr('sqrw', x);
+          con.attr('sqrh', y);          
+        });
+        sqr.on('mouseleave', function() {          
+          con.attr('sqrw', -1);
+          con.attr('sqrh', -1);          
+        });
+        con.append(sqr);
+        i++;
+      };
     });
   },
 
