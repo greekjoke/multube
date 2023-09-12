@@ -2,6 +2,7 @@
 
 window.MtTaskAudio = function() {
   const app = MtApp;  
+  const defaultAudioLink = 'https://upload.wikimedia.org/wikipedia/commons/a/a2/National_Anthem_of_Montenegro.ogg';
   const suportCaps = [MtTask.CAPS.PLAYBACK, MtTask.CAPS.VOLUME, MtTask.CAPS.SPEED, MtTask.CAPS.POSITION];
   const parent = MtTask();
 
@@ -32,6 +33,7 @@ window.MtTaskAudio = function() {
 
     get type() { return 'MtTaskAudio'; },
     get isReady() { return this.playerReady; },
+    get link() { return this.envelope.link; },
 
     get volume() { return this.envelope.volume || 100; },
     set volume(v) {
@@ -50,7 +52,8 @@ window.MtTaskAudio = function() {
     },
     
     menuItems: [
-      { id:'load', title:'Load from file' },
+      { id:'select', title:'Select internet audio' },
+      { id:'load', title:'Load from file' },      
       { id:'left', title:'Left ear', bool:true },
       { id:'right', title:'Right ear', bool:true },
     ],
@@ -79,6 +82,9 @@ window.MtTaskAudio = function() {
         return;
       }      
       switch(code) {
+        case 'select':
+          this.selectAudio();
+          break;
         case 'load':
           this.loadFromFile();
           break;
@@ -148,6 +154,14 @@ window.MtTaskAudio = function() {
        }
           
       }, '.mp3,.ogg,.wav');
+    },
+
+    selectAudio: function() {
+      const self = this;      
+      const linkDefault = this.envelope.link || defaultAudioLink;
+      app.showPrompt('Enter internet audio link (like http:// ... mp3, ogg, wav.)', linkDefault, function(link) {
+        self.switchToLink(link);
+      });
     },
 
     init: function(link) {
@@ -244,6 +258,9 @@ window.MtTaskAudio = function() {
       if (save) {
         if (this.envelope.link == link) return false;
         this.envelope.link = link;   
+        this.title = link.split("/").splice(-1).pop();
+        console.log('recent', this.title, this.link);
+        this.addRecent(this.title, this.link);
       } else {
         this.envelope.link = false;
       }
