@@ -75,6 +75,11 @@ window.MtApp = {
     if (fnOk) fnOk.call(this);
   },
 
+  showErrorFileLoading: function(fnOk) {    
+    this.showError('Error occurred while accessing or reading remote file. '+
+      'Perhaps the remote server does not allow its files to be used on other sites.', fnOk);
+  },
+
   getPresetByName: function(s) {
     return this.settings.presets.find(x => {
       return x.name === s ? x : undefined;

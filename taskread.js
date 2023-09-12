@@ -54,6 +54,14 @@ window.MtTaskRead = function() {
       var arrayBuffer = oReq.response;
       cb(arrayBuffer);    
     };
+    oReq.onreadystatechange = function (e) {
+      if (oReq.readyState === 4) {
+        if (oReq.status !== 200) {          
+            //console.error("Error", oReq.status, oReq.statusText);
+            app.showErrorFileLoading();
+        }
+      }
+    };
     oReq.send();
   };
 
@@ -75,9 +83,9 @@ window.MtTaskRead = function() {
       return this.speaker && this.envelope.speak;      
     },
         
-    menuItems: [
+    menuItems: [      
+      { id:'select', title:'Select internet text' },
       { id:'load', title:'Load from file' },
-      { id:'select', title:'Select internet text' },          
       { id:'rtext', title:'Reverse text', bool:true, serializable:true },
       { id:'rword', title:'Reverse word', bool:true, serializable:true },
       { id:'mhoriz', title:'Mirror horizontal', bool:true, serializable:true },

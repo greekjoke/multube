@@ -198,7 +198,7 @@ window.MtTaskAudio = function() {
 
       this.audioElem = $('<audio controls="controls"></audio>')[0];
 
-      $(this.audioElem).on('canplay ended pause play loadedmetadata volumechange ratechange', e => {
+      $(this.audioElem).on('canplay ended pause play loadedmetadata volumechange ratechange error', e => {
         switch(e.type) {
           case 'loadedmetadata':
             //console.log('meta', e);
@@ -224,6 +224,10 @@ window.MtTaskAudio = function() {
             break;
           case 'ratechange':
             self.playbackRate = self.audioElem.playbackRate * 100;
+            break;
+          case 'error':            
+            //const ee = e.originalEvent;
+            app.showErrorFileLoading();
             break;
         }        
       });
