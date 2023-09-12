@@ -57,8 +57,10 @@ window.MtTaskYt = function() {
       this.setStatus('general', 'unready');
       this.playerReady = false;
 
-      if (!window.MtTaskYt.YouTubeIframeAPIReady)
+      if (!window.MtTaskYt.YouTubeIframeAPIReady) {
+        console.error('YoutubeAPI is not ready');
         return;
+      }
 
       const self = this;      
       const link = this.envelope.link;            
@@ -117,6 +119,8 @@ window.MtTaskYt = function() {
       const ifr = this.player.getIframe().contentWindow;
       if (event.source !== ifr) return;          
       const data = JSON.parse(event.data);
+
+      console.debug('yt', data);
     
       // The "infoDelivery" event is used by YT to transmit any
       // kind of information change in the player,
@@ -220,6 +224,23 @@ function onYouTubeIframeAPIReady() {
     t.init();
   }
 }
+
+/*
+const tBegin = new Date();    
+    const tWait = setInterval(function() { // waiting unitl yt is ready
+      const t = new Date();
+      const duration = t.getTime() - tBegin.getTime();
+      if (window.MtTaskYt.YouTubeIframeAPIReady) {
+        console.info(`YoutubeAPI ready in ${duration} ms`);
+        clearInterval(tWait);
+        MtApp.init();
+      } else if (duration > 5000) {
+        clearInterval(tWait);
+        console.error('YoutubeAPI timeout');
+        $('#widgets .placeholder').html('<span class="error">Youtube API is timed out</span>');
+      }
+    }, 200);
+*/
 
 window.MtTaskYt.initOnce = function() {  
   if (window.MtTaskYt.__initOnce) return;

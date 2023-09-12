@@ -32,6 +32,9 @@ a:hover {
 }
 
 /* helpers */
+.error {
+  color: red;
+}
 .inline {
   display: inline;
 }
