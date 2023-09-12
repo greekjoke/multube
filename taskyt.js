@@ -29,6 +29,15 @@ window.MtTaskYt = function() {
       app.settingsWrite(true);      
     },
 
+    get playbackRate() { return this.envelope.playbackRate || 1.0; },
+    set playbackRate(v) {
+      v = parseFloat(v);
+      const old = this.envelope.playbackRate || 1.0;
+      if (Math.round(old * 100) === Math.round(v * 100)) return;
+      this.envelope.playbackRate = v;
+      app.settingsWrite(true);
+    },
+
     menuItems: [
       { id:'select', title:'Select Youtube video' },      
     ],
@@ -52,15 +61,16 @@ window.MtTaskYt = function() {
     init: function() {   
       console.log('MtTaskYt.init@1');
 
+      if (!window.MtTaskYt.YouTubeIframeAPIReady) {
+        //console.error('YoutubeAPI is not ready');
+        this.content.html('<span class="error">Youtube API is not ready</span>');
+        return;
+      }
+
       parent.init();
 
       this.setStatus('general', 'unready');
       this.playerReady = false;
-
-      if (!window.MtTaskYt.YouTubeIframeAPIReady) {
-        console.error('YoutubeAPI is not ready');
-        return;
-      }
 
       const self = this;      
       const link = this.envelope.link;            
@@ -85,6 +95,7 @@ window.MtTaskYt = function() {
         }        
         self.addRecent(self.title, self.link);
         self.player.setVolume(self.volume);
+        self.player.setPlaybackRate(self.playbackRate);
       };
     
       const onPlayerStateChange = function(event) {        
@@ -119,18 +130,12 @@ window.MtTaskYt = function() {
       const ifr = this.player.getIframe().contentWindow;
       if (event.source !== ifr) return;          
       const data = JSON.parse(event.data);
-
-      console.debug('yt', data);
-    
-      // The "infoDelivery" event is used by YT to transmit any
-      // kind of information change in the player,
-      // such as the current time or a volume change.
-      if (
-        data.event === "infoDelivery" &&
-        data.info &&
-        data.info.volume
-      ) {        
-        this.volume = data.info.volume;
+      if (data.event === "infoDelivery" && data.info) {        
+        if (data.info.volume) {        
+          this.volume = data.info.volume;
+        } else if (data.info.playbackRate) {        
+          this.playbackRate = data.info.playbackRate;
+        }
       }
     },
 
@@ -224,23 +229,6 @@ function onYouTubeIframeAPIReady() {
     t.init();
   }
 }
-
-/*
-const tBegin = new Date();    
-    const tWait = setInterval(function() { // waiting unitl yt is ready
-      const t = new Date();
-      const duration = t.getTime() - tBegin.getTime();
-      if (window.MtTaskYt.YouTubeIframeAPIReady) {
-        console.info(`YoutubeAPI ready in ${duration} ms`);
-        clearInterval(tWait);
-        MtApp.init();
-      } else if (duration > 5000) {
-        clearInterval(tWait);
-        console.error('YoutubeAPI timeout');
-        $('#widgets .placeholder').html('<span class="error">Youtube API is timed out</span>');
-      }
-    }, 200);
-*/
 
 window.MtTaskYt.initOnce = function() {  
   if (window.MtTaskYt.__initOnce) return;
