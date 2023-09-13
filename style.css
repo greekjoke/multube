@@ -387,13 +387,13 @@ body.cap-position #gctrl i[action="gcRewindRand"]
   width: 100%;
   padding: 1rem 0;
   margin-bottom: 1rem;
-  font-size: 4vw;
+  font-size: 3vw;
   color: black;
   overflow: hidden;
   word-break: break-all;
 }
 .reading-view .center.long-word {
-  font-size: 3vw;
+  font-size: 2vw;
 }
 .reading-view input.curPos {
   display: block;
