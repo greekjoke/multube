@@ -268,7 +268,11 @@ window.MtApp = {
   },
 
   switchLayout: function(value) {
+    if (typeof value === 'undefined')
+      return;
+
     const cur = this.settings.curLayout;
+    
     value = parseInt(value);
     
     if (value === cur)
@@ -291,7 +295,7 @@ window.MtApp = {
 
   updateLayoutAttrs: function() {
     const width = this.options.layoutWidth;
-    const value = this.settings.curLayout;        
+    const value = this.settings.curLayout;
     const y = Math.floor(value / width);
     const x = value - y * width;
     $('body').attr('layout', value);
@@ -627,7 +631,7 @@ window.MtApp = {
     const width = this.options.layoutWidth;
     const height = this.options.layoutHeight;
     const cnt = width * height;
-    const htmlSquare = '<div class="sqr-button"><div class="sqr-item"></div></div>';
+    const htmlSquare = '<div class="sqr-button"></div>';
     $('.layout-selector').each(function() {
       const con = $(this);
       con.html('');      

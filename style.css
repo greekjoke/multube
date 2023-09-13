@@ -480,13 +480,12 @@ body[color-scheme="dark"] .task {
 /* layout */
 body[layout-w="0"] .task { min-width: 98%; }
 body[layout-w="1"] .task { min-width: 46%; }
-body[layout-w="2"] .task { /*min-width: 30%;*/ }
+/*body[layout-w="2"] .task { min-width: 30%; }*/
 body[layout-w="3"] .task { min-width: 22%; }
 body[layout-w="4"] .task { min-width: 18%; }
-
 body[layout-h="0"] .task { min-height: 94vh; }
 body[layout-h="1"] .task { min-height: 47vh; }
-body[layout-h="2"] .task { /*min-height: 31vh;*/ }
+/*body[layout-h="2"] .task { min-height: 31vh; }*/
 body[layout-h="3"] .task { min-height: 23vh; }
 body[layout-h="4"] .task { min-height: 18vh; }
 
@@ -496,12 +495,15 @@ body[layout-h="4"] .task { min-height: 18vh; }
   margin: 0.5rem !important;
   padding: 0 !important;
   line-height: 0.5rem;
-  width: 6rem;
-  height: 6rem;
+  width: 100px;
+  height: 100px;
   position: relative;
+  background-color: white;
+  border: 2px solid gray;
+  box-sizing: content-box;  
 }
 .layout-selector:hover {
-  background-color: inherit !important;
+  background-color: white !important;
 }
 .layout-selector:before,
 .layout-selector:after
@@ -515,49 +517,41 @@ body[layout-h="4"] .task { min-height: 18vh; }
   pointer-events: none;
 }
 .layout-selector:before {  
-  background-color: rgba(0,0,255,0.4);
-  z-index: 2;
+  background-color: rgba(0,0,255,0.3);
+  z-index: 1;
 }
 .layout-selector:after {
-  background-color: rgba(50,150,0,0.8);
+  background-color: #0e0;
   z-index: 0;
 }
 .layout-selector .sqr-button {
   display: inline-block;  
   position: relative;
-  z-index: 1;
+  z-index: 2;  
+  width: 20%;
+  height: 20%;
+  border: 2px solid gray; 
 }
-.layout-selector .sqr-item {
-  display: block;
-  width: 1rem;
-  height: 1rem;  
-  border: 1px solid gray;
-  background-color: white;
-  margin: 0.1rem;
-  pointer-events: none !important;
+.layout-selector .sqr-button:hover {
+  background-color: #ff0;
 }
-.layout-selector .sqr-button:hover .sqr-item {
-  background-color: gray;
-}
-
-.layout-selector[sqrw="0"]:before { width: 1.2rem; }
-.layout-selector[sqrw="1"]:before { width: 2.4rem; }
-.layout-selector[sqrw="2"]:before { width: 3.6rem; }
-.layout-selector[sqrw="3"]:before { width: 4.8rem; }
-.layout-selector[sqrw="4"]:before { width: 6.0rem; }
-.layout-selector[sqrh="0"]:before { height: 1.2rem; }
-.layout-selector[sqrh="1"]:before { height: 2.4rem; }
-.layout-selector[sqrh="2"]:before { height: 3.6rem; }
-.layout-selector[sqrh="3"]:before { height: 4.8rem; }
-.layout-selector[sqrh="4"]:before { height: 6.0rem; }
-
-body[layout-w="0"] .layout-selector:after { width: 1.2rem; }
-body[layout-w="1"] .layout-selector:after { width: 2.4rem; }
-body[layout-w="2"] .layout-selector:after { width: 3.6rem; }
-body[layout-w="3"] .layout-selector:after { width: 4.8rem; }
-body[layout-w="4"] .layout-selector:after { width: 6.0rem; }
-body[layout-h="0"] .layout-selector:after { height: 1.2rem; }
-body[layout-h="1"] .layout-selector:after { height: 2.4rem; }
-body[layout-h="2"] .layout-selector:after { height: 3.6rem; }
-body[layout-h="3"] .layout-selector:after { height: 4.8rem; }
-body[layout-h="4"] .layout-selector:after { height: 6.0rem; }
+.layout-selector[sqrw="0"]:before { width: 20%; }
+.layout-selector[sqrw="1"]:before { width: 40%; }
+.layout-selector[sqrw="2"]:before { width: 60%; }
+.layout-selector[sqrw="3"]:before { width: 80%; }
+.layout-selector[sqrw="4"]:before { width: 100%; }
+.layout-selector[sqrh="0"]:before { height: 20%; }
+.layout-selector[sqrh="1"]:before { height: 40%; }
+.layout-selector[sqrh="2"]:before { height: 60%; }
+.layout-selector[sqrh="3"]:before { height: 80%; }
+.layout-selector[sqrh="4"]:before { height: 100%; }
+body[layout-w="0"] .layout-selector:after { width: 20%; }
+body[layout-w="1"] .layout-selector:after { width: 40%; }
+body[layout-w="2"] .layout-selector:after { width: 60%; }
+body[layout-w="3"] .layout-selector:after { width: 80%; }
+body[layout-w="4"] .layout-selector:after { width: 100%; }
+body[layout-h="0"] .layout-selector:after { height: 20%; }
+body[layout-h="1"] .layout-selector:after { height: 40%; }
+body[layout-h="2"] .layout-selector:after { height: 60%; }
+body[layout-h="3"] .layout-selector:after { height: 80%; }
+body[layout-h="4"] .layout-selector:after { height: 100%; }
