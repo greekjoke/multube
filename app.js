@@ -26,6 +26,8 @@ window.MtApp = {
   options: {},
 
   init: function(opt) {
+    const self = this;
+
     opt = opt || {};
     
     if (!MtUtils.hasQueryKey('reset')) {      
@@ -50,6 +52,10 @@ window.MtApp = {
     this.updateLayoutAttrs();
 
     this.ready = true;
+
+    window.addEventListener('resize', function() {
+      self.adjustTasksMenu();
+    }, true);
   },
 
   releaseMenu: function(menu) {
@@ -146,6 +152,7 @@ window.MtApp = {
 
     this.updateGlobalCaps();
     this.updateDocTitle();
+    this.onTasksListChanged();
   },
 
   updateDocTitle: function() {
@@ -401,6 +408,7 @@ window.MtApp = {
       const con = $('#widgets');
       con.find('.placeholder').show();
     }
+    this.onTasksListChanged();
   },
 
   getTaskById: function(id) {
@@ -440,6 +448,7 @@ window.MtApp = {
     this.settingsWrite();
     this.releaseMenu();     
     this.onTaskAdded(t);
+    this.onTasksListChanged();
   },
 
   addTaskYt: function() {
@@ -652,6 +661,80 @@ window.MtApp = {
         con.append(sqr);
         i++;
       };
+    });
+  },
+
+  _deferredTaskMenuUpdateTimer: null,
+
+  onTasksListChanged: function() {   
+    const self = this;
+    clearTimeout(this._deferredTaskMenuUpdateTimer);
+    this._deferredTaskMenuUpdateTimer = setTimeout(function() {
+      self.adjustTasksMenu();
+    }, 100);
+  },
+
+  adjustTasksMenu: function() {
+    const rcView = $("#widgets")[0].getBoundingClientRect();
+        
+    const adjustPos = function(elem, parent) {      
+      parent = parent || { left:0, top:0 };
+      elem = $(elem);
+      
+      const css = {};
+      const ofs = elem.offset();            
+      const rcElem = {
+        width: elem.width(),
+        height: elem.height(),
+        left: ofs.left + parent.left,
+        top: ofs.top + parent.top,
+      };      
+
+      rcElem.right = rcElem.left + rcElem.width;
+      rcElem.bottom = rcElem.top + rcElem.height;
+
+      if (rcElem.right > rcView.right) {
+        const delta = (rcView.right - rcElem.right);        
+        css['margin-left'] = delta;
+        parent.left += delta;
+      }
+
+      if (rcElem.bottom > rcView.bottom) {        
+        const delta = (rcView.bottom - rcElem.bottom);        
+        css['margin-top'] = delta;
+        parent.top += delta;
+      }
+
+      setTimeout(() => elem.css(css), 20);
+
+      elem.find('ul').each(function() {
+        adjustPos(this, {left:parent.left, top:parent.top});
+      });      
+    };
+
+    const listAll = $('.task .bar ul.submenu, .task .bar ul.submenu ul');
+    const listMain = $('.task .bar ul.submenu');
+
+    listAll.each(function() {
+      const elem = $(this);
+      const previousCss  = elem.attr("style");
+      elem.data('style2', previousCss);
+      elem.attr('style', ''); // reset prev adjustment
+      elem.css({
+        position: 'absolute',
+        visibility: 'hidden',
+        display: 'block',        
+      });
+    });
+
+    listMain.each(function() {      
+      adjustPos(this);
+    });
+
+    listAll.each(function() {
+      const elem = $(this);
+      const previousCss = elem.data('style2');
+      elem.attr("style", previousCss ? previousCss : '');
     });
   },
 

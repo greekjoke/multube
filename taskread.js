@@ -294,9 +294,7 @@ window.MtTaskRead = function() {
 
     init: function(link) {
       const self = this;
-
-      console.log('MtTaskRead.init@1');
-
+                                       
       parent.init();
 
       this.setStatus('general', 'unready');
@@ -309,7 +307,6 @@ window.MtTaskRead = function() {
       this.content.html(''); // clear
 
       link = link || this.link;
-      console.log('MtTaskRead.init@2', link);
       
       if (!link) {
         if (this.title !== 'Untitled') {

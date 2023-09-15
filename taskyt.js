@@ -59,7 +59,6 @@ window.MtTaskYt = function() {
     },
 
     init: function() {   
-      console.log('MtTaskYt.init@1');
 
       parent.init();
 
@@ -82,11 +81,8 @@ window.MtTaskYt = function() {
       const wr = this.content.closest('.content-wrap');      
       wr.html('');
       wr.append($(dom));      
-
-      console.log('MtTaskYt.init@2');
-
+                                     
       const onPlayerReady = function(event) {  
-        console.log('MtTaskYt.init@3');
         self.playerReady = true;
         self.setStatus('general', 'ready');
         const data = self.player.getVideoData();        

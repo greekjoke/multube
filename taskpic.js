@@ -68,9 +68,7 @@ window.MtTaskPic = function() {
 
     init: function(link) {
       const self = this;
-
-      console.log('MtTaskPic.init@1');
-
+                                      
       parent.init();
 
       this.setStatus('general', 'unready');
@@ -80,7 +78,6 @@ window.MtTaskPic = function() {
       this.content.html(''); // clear
 
       link = link || this.envelope.link;            
-      console.log('MtTaskPic.init@2', link ? link.substr(0, 20) : false);
       
       if (!link) {
         if (this.title !== 'Untitled') {

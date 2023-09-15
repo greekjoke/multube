@@ -167,8 +167,6 @@ window.MtTaskAudio = function() {
     init: function(link) {
       const self = this;
 
-      console.log('MtTaskAudio.init@1');
-
       parent.init();
 
       this.setStatus('general', 'unready');
@@ -185,7 +183,6 @@ window.MtTaskAudio = function() {
       this.stereoNode = false;
 
       link = link || this.envelope.link;            
-      console.log('MtTaskAudio.init@2', link ? link.substr(0, 20) : false);
       
       if (!link) {
         if (this.title !== 'Untitled') {
@@ -263,7 +260,6 @@ window.MtTaskAudio = function() {
         if (this.envelope.link == link) return false;
         this.envelope.link = link;   
         this.title = link.split("/").splice(-1).pop();
-        console.log('recent', this.title, this.link);
         this.addRecent(this.title, this.link);
       } else {
         this.envelope.link = false;

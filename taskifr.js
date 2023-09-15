@@ -34,9 +34,7 @@ window.MtTaskFrame = function() {
 
     init: function(link) {
       const self = this;
-
-      console.log('MtTaskFrame.init@1');
-
+                                        
       parent.init();
 
       this.setStatus('general', 'unready');
@@ -45,7 +43,6 @@ window.MtTaskFrame = function() {
       this.content.html(''); // clear
 
       link = link || this.envelope.link;            
-      console.log('MtTaskFrame.init@2', link);
       
       if (!link) {      
         this.content.html('empty');      
