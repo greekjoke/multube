@@ -605,6 +605,7 @@ window.MtApp = {
           }
 
           self.settingsWrite(true);
+          self.onTasksListChanged();
       }
     });
   },
