@@ -93,21 +93,25 @@ window.MtTask = function() {
 
       const m = elem.find('.bar .settings .submenu');
       const r = app.getRecent(this.type);
-      const samples = app.getSamples(this.type);
-
+      
       m.find('li.recent').remove(); // remove old menu
 
       if (r.length < 1)
         return;
 
       const sub = $('<ul action="taskCmd"></ul>');
+      const samples = app.getSamples(this.type);
+      const ar = MtUtils.clone(r);
 
-      r.sort((a, b) => a.title.localeCompare(b.title)); // sort by alphabet
-
-      r.forEach(x => {
+      ar.forEach(x => {
         const smp = samples.find(y => y.value === x.value);
-        const title = smp ? smp.title : x.title;
-        sub.append(`<li value="${x.value}" title="${x.title}">${title}</li>`);
+        x.display = smp ? smp.title : x.title;
+      });
+
+      ar.sort((a, b) => a.display.localeCompare(b.display)); // sort by alphabet
+
+      ar.forEach(x => {        
+        sub.append(`<li value="${x.value}" title="${x.display}">${x.display}</li>`);
       });
       
       const item = $('<li class="recent"><b>Recent</b></li>');
