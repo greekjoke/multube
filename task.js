@@ -93,6 +93,7 @@ window.MtTask = function() {
 
       const m = elem.find('.bar .settings .submenu');
       const r = app.getRecent(this.type);
+      const samples = app.getSamples(this.type);
 
       m.find('li.recent').remove(); // remove old menu
 
@@ -101,8 +102,12 @@ window.MtTask = function() {
 
       const sub = $('<ul action="taskCmd"></ul>');
 
+      r.sort((a, b) => a.title.localeCompare(b.title)); // sort by alphabet
+
       r.forEach(x => {
-        sub.append(`<li value="${x.value}" title="${x.title}">${x.title}</li>`);
+        const smp = samples.find(y => y.value === x.value);
+        const title = smp ? smp.title : x.title;
+        sub.append(`<li value="${x.value}" title="${x.title}">${title}</li>`);
       });
       
       const item = $('<li class="recent"><b>Recent</b></li>');
@@ -124,6 +129,8 @@ window.MtTask = function() {
         return;
 
       const sub = $('<ul action="taskCmd"></ul>');
+
+      r.sort((a, b) => a.title.localeCompare(b.title)); // sort by alphabet
 
       r.forEach(x => {
         sub.append(`<li value="${x.value}">${x.title}</li>`);
