@@ -113,10 +113,19 @@ window.MtApp = {
     const cur = this.settings.curPreset;   
     const htmlCheck = '<i class="fa-solid fa-check"></i>';
     const list = $('#topmenuPresets');
-    list.html(''); // clear    
+    const ar = [];
+    
     this.settings.presets.forEach(x => {
+      ar.push({id:x.id, text:x.name});      
+    });    
+
+    list.html(''); // clear    
+    ar.sort((a, b) => a.text.localeCompare(b.text)); // sort by alphabet    
+
+    ar.forEach(x => {
       const ch = x.id === cur ? '1' : '0';
-      list.append(`<li value="${x.id}" flag="${ch}">${htmlCheck}${x.name}</li>`);
+      const name = x.id == 'default' ? ('[' + x.text + ']') : x.text;
+      list.append(`<li value="${x.id}" flag="${ch}">${htmlCheck}${name}</li>`);
     });    
   },
 
